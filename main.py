@@ -59,7 +59,7 @@ def get_own_hash_ethereum(file_id):
     hash = notary.functions.getOwnFileHash(file_id).call({
         'from': address
     })
-    return hash
+    return str(hash)
 
 def save_hash_ethereum(file_id, file_hash):
 
