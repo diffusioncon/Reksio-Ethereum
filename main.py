@@ -43,13 +43,6 @@ import web3_utils
 CHAIN_ID = 42
 FAUCET_ADDRESS = "0x4d6Bb4ed029B33cF25D0810b029bd8B1A6bcAb7B"
 
-logger.info("Initializing Blockchain2Go reader...")
-card = init_blocksec2go_card()
-
-w3, public_key, address = web3_utils.init_web3(card)
-
-notary = load_file_notary_contract('0x00')
-
 #———————————————————————————————————————————————————————————————————————————
 
 def load_file_notary_contract():
@@ -130,6 +123,13 @@ def save_hash():
 # Main
 
 if __name__ == "__main__":
+    logger.info("Initializing Blockchain2Go reader...")
+    card = init_blocksec2go_card()
+
+    w3, public_key, address = web3_utils.init_web3(card)
+
+    notary = load_file_notary_contract()
+
     app.run()
 
 #———————————————————————————————————————————————————————————————————————————
