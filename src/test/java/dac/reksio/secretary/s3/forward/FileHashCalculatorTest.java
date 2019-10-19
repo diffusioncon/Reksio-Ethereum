@@ -18,7 +18,7 @@ class FileHashCalculatorTest {
         S3UploadRequest file = S3UploadRequest.builder()
                                               .fileContent("content".getBytes(StandardCharsets.UTF_8))
                                               .build();
-        String expectedFileHash = "ed7002b439e9ac845f22357d822bac1444730fbdb6016d3ec9432297b9ec9f73";
+        String expectedFileHash = "0xed7002b439e9ac845f22357d822bac1444730fbdb6016d3ec9432297b9ec9f73";
 
         // when
         String hexHash = testObj.calculateHash(file);

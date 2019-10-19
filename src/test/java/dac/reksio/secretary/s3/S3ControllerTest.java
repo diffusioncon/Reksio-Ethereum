@@ -1,5 +1,6 @@
 package dac.reksio.secretary.s3;
 
+import dac.reksio.secretary.s3.forward.DltClient;
 import dac.reksio.secretary.s3.forward.ReksioMinioClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ class S3ControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private ReksioMinioClient reksioMinioClient;
+    @MockBean
+    private DltClient dltClient;
 
     @Test
     void shouldUploadFileToS3() throws Exception {

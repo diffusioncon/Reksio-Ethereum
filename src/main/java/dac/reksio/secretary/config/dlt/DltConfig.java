@@ -13,8 +13,9 @@ import javax.persistence.Id;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-class DltConfig {
+public class DltConfig {
     @Id
     private String id;
     private Dlt dlt;
+    private String uri;
 }

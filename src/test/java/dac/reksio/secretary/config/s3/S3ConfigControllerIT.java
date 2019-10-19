@@ -25,7 +25,13 @@ class S3ConfigControllerIT {
     @Test
     void shouldSaveS3Config() throws Exception {
         //given
-        String json = "{\"apiUrl\":\"someUrl\",\"key\":\"someKey\",\"secret\":\"someSecret\"}";
+        String json = "{\n" +
+                "\"apiUrl\": \"http://localhost:9001\",\n" +
+                "\"bucket\": \"camera1\",\n" +
+                "\"key\": \"minio\",\n" +
+                "\"secret\": \"minio123\",\n" +
+                "\"region\": \"eu-central-1\"\n" +
+                "}";
 
         //when
         mockMvc.perform(put("/api/configs/s3")
@@ -38,10 +44,11 @@ class S3ConfigControllerIT {
         Optional<S3Config> s3Config = s3ConfigRepository.findById(S3ConfigRepository.ID);
         assertThat(s3Config).hasValue(S3Config.builder()
                                               .id(S3ConfigRepository.ID)
-                                              .apiUrl("someUrl")
-                                              .key("someKey")
-                                              .bucket("bucket")
-                                              .secret("someSecret")
+                                              .apiUrl("http://localhost:9001")
+                                              .bucket("camera1")
+                                              .key("minio")
+                                              .secret("minio123")
+                                              .region("eu-central-1")
                                               .build());
     }
 

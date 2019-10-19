@@ -9,6 +9,7 @@ class DltConfigDTOConverter {
         return DltConfig.builder()
                         .dlt(dltConfigDTO.getDlt())
                         .id(DltConfigRepository.ID)
+                        .uri(dltConfigDTO.getUri())
                         .build();
     }
 
