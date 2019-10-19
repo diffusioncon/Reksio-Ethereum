@@ -61,31 +61,26 @@ def get_own_hash_ethereum(file_id):
     hash = notary.functions.getOwnFileHash(file_id).call({
         'from': address
     })
-    return str(hash)
+    return hash.hex()
 
 def get_hash_ethereum(address, file_id):
     #TODO: check for card status
     hash = notary.functions.getFileHash(address, file_id).call({
         'from': address
     })
-    return str(hash)
+    return hash.hex()
 
 def save_hash_ethereum(file_id, file_hash):
 
     # Prepare transaction data
     raw_unsigned_transaction = notary.functions.setFileHash(file_id, file_hash).buildTransaction()
 
-    logger.debug(f"Transaction built: {raw_unsigned_transaction}")
-
-    logger.debug("Getting nonce...")
     nonce = w3.eth.getTransactionCount(address)
     logger.debug(f"Got nonce: {nonce}")
 
     raw_unsigned_transaction['nonce'] = nonce
     # raw_unsigned_transaction['from'] = address
     raw_unsigned_transaction['to'] = notary.address
-
-    logger.debug(f"Transaction updated: {raw_unsigned_transaction}")
 
     unsigned_transaction = serializable_unsigned_transaction_from_dict(
         raw_unsigned_transaction
@@ -116,17 +111,16 @@ def get_own_hash(file_id):
     hash = get_own_hash_ethereum(file_id)
     return jsonify({
         "result": "OK",  #TODO: check blockchain2go status
-        "hash": bytes(hash, 'utf-8').hex()
+        "hash": hash
     })
 
 @app.route("/api/v1/hash/<file_owner>/<file_id>", methods = ['GET'])
 def get_hash(file_owner, file_id):
     logger.debug(f"get_hash({file_owner}, {file_id})")
     hash = get_hash_ethereum(file_owner, file_id)
-    logger.debug(hash[0])
     return jsonify({
         "result": "OK",  #TODO: check blockchain2go status
-        "hash": bytes(hash, 'utf-8').hex()
+        "hash": hash
     })
 
 @app.route("/api/v1/hash", methods = ['POST'])
