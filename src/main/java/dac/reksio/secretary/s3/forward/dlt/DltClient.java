@@ -1,4 +1,4 @@
-package dac.reksio.secretary.s3.forward;
+package dac.reksio.secretary.s3.forward.dlt;
 
 import dac.reksio.secretary.config.dlt.DltConfig;
 import dac.reksio.secretary.config.dlt.DltConfigRepository;
@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class DltClient {
 
-    public static final String HASH_ENDPOINT = "/api/v1/hash";
+    public static final String HASH_ENDPOINT = "/api/v1/hash/";
     private final DltConfigRepository dltConfigRepository;
     private final RestTemplate restTemplate;
 
@@ -21,5 +21,10 @@ public class DltClient {
         DltFileDto dltFileDto = new DltFileDto(originalFilename, hexHash);
 
         restTemplate.postForEntity(dltConfig.getUri() + HASH_ENDPOINT, dltFileDto, String.class);
+    }
+
+    public DltHashDto getHashOfFile(String filename) {
+        DltConfig dltConfig = dltConfigRepository.getOne(DltConfigRepository.ID);
+        return restTemplate.getForObject(dltConfig.getUri() + HASH_ENDPOINT, DltHashDto.class);
     }
 }

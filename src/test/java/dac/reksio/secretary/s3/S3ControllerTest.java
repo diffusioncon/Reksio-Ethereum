@@ -1,7 +1,7 @@
 package dac.reksio.secretary.s3;
 
-import dac.reksio.secretary.s3.forward.DltClient;
-import dac.reksio.secretary.s3.forward.ReksioMinioClient;
+import dac.reksio.secretary.s3.forward.ReksioStorageClient;
+import dac.reksio.secretary.s3.forward.dlt.DltClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,7 +20,7 @@ class S3ControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private ReksioMinioClient reksioMinioClient;
+    private ReksioStorageClient reksioStorageClient;
     @MockBean
     private DltClient dltClient;
 

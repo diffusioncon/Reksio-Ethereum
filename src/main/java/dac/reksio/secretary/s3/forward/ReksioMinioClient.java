@@ -1,38 +1,31 @@
 package dac.reksio.secretary.s3.forward;
 
+import dac.reksio.secretary.config.s3.S3Config;
 import dac.reksio.secretary.config.s3.S3ConfigRepository;
 import dac.reksio.secretary.s3.S3UploadRequest;
 import io.minio.MinioClient;
-import io.minio.ServerSideEncryption;
+import io.minio.errors.InvalidEndpointException;
+import io.minio.errors.InvalidPortException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.S3Configuration;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
+import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class ReksioMinioClient {
+class ReksioMinioClient implements ReksioStorageClient {
 
     private final S3ConfigRepository s3ConfigRepository;
 
+    @Override
     @SneakyThrows
-    void uploadFile(S3UploadRequest s3UploadRequest) {
+    public void uploadFile(S3UploadRequest s3UploadRequest) {
         var s3Configuration = s3ConfigRepository.getOne(S3ConfigRepository.ID);
 
-        MinioClient minioClient = new MinioClient(s3Configuration.getApiUrl(), s3Configuration.getKey(), s3Configuration.getSecret());
+        MinioClient minioClient = getMinioClient(s3Configuration);
         minioClient.putObject(
                 s3Configuration.getBucket(),
                 s3UploadRequest.getKey(),
@@ -42,5 +35,20 @@ public class ReksioMinioClient {
                 null,
                 s3UploadRequest.getContentType()
         );
+    }
+
+    @Override
+    @SneakyThrows
+    public byte[] getFileContent(String filename) {
+        var s3Configuration = s3ConfigRepository.getOne(S3ConfigRepository.ID);
+
+        MinioClient minioClient = getMinioClient(s3Configuration);
+        try (InputStream inputStream = minioClient.getObject(s3Configuration.getBucket(), filename)) {
+            return inputStream.readAllBytes();
+        }
+    }
+
+    private MinioClient getMinioClient(S3Config s3Configuration) throws InvalidEndpointException, InvalidPortException {
+        return new MinioClient(s3Configuration.getApiUrl(), s3Configuration.getKey(), s3Configuration.getSecret());
     }
 }
