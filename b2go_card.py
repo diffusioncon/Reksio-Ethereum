@@ -45,3 +45,8 @@ class Blocksec2goWrapper:
             self.reader, self.key_id, data
         )
         return signature
+
+def init_blocksec2go_card():
+    card = Blocksec2goWrapper()
+    card.init(key_id=1)
+    return card
