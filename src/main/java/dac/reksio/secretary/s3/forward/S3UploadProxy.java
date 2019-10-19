@@ -1,11 +1,10 @@
 package dac.reksio.secretary.s3.forward;
 
 import dac.reksio.secretary.files.FileEntity;
-import dac.reksio.secretary.files.FilesRepository;
+import dac.reksio.secretary.files.FileRepository;
 import dac.reksio.secretary.s3.S3UploadRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.time.Instant;
 
@@ -15,12 +14,12 @@ public class S3UploadProxy {
 
     private final FileHashCalculator fileHashCalculator;
     private final DltClient dltClient;
-    private final FilesRepository filesRepository;
-    private final ReksioS3Client reksioS3Client;
+    private final FileRepository filesRepository;
+    private final ReksioMinioClient reksioS3Client;
 
-    public PutObjectResponse forwardRequest(S3UploadRequest s3UploadRequest) {
-        String hexHash = fileHashCalculator.calculateHash(s3UploadRequest.getFile());
-        String filename = s3UploadRequest.getKey();
+    public void forwardRequest(S3UploadRequest s3UploadRequest) {
+        String hexHash = fileHashCalculator.calculateHash(s3UploadRequest);
+        String filename = s3UploadRequest.getFilename();
         dltClient.saveInDlt(filename, hexHash);
 
         filesRepository.save(FileEntity.builder()
@@ -29,6 +28,6 @@ public class S3UploadProxy {
                                        .uploadDateTime(Instant.now())
                                        .build());
 
-        return reksioS3Client.uploadFile(s3UploadRequest);
+        reksioS3Client.uploadFile(s3UploadRequest);
     }
 }

@@ -10,11 +10,12 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.net.URI;
 
 @Component
 @RequiredArgsConstructor
@@ -22,13 +23,18 @@ public class ReksioS3Client {
 
     private final S3ConfigRepository s3ConfigRepository;
 
-    @SneakyThrows
     PutObjectResponse uploadFile(S3UploadRequest s3UploadRequest) {
         var s3Configuration = s3ConfigRepository.getOne(S3ConfigRepository.ID);
         var credentialsProvider = StaticCredentialsProvider.create(
                 AwsBasicCredentials.create(s3Configuration.getKey(), s3Configuration.getSecret())
         );
+        S3Configuration build = S3Configuration.builder()
+                                               .pathStyleAccessEnabled(true)
+                                               .build();
+
         var client = S3Client.builder()
+                             .endpointOverride(URI.create(s3Configuration.getApiUrl()))
+                             .serviceConfiguration(build)
                              .credentialsProvider(credentialsProvider)
                              .region(Region.of(s3Configuration.getRegion()))
                              .build();
@@ -43,8 +49,8 @@ public class ReksioS3Client {
         return client.putObject(putObjectRequest, requestBody);
     }
 
-    private RequestBody getRequestBody(S3UploadRequest s3UploadRequest) throws IOException {
-        byte[] bytes = s3UploadRequest.getFile().getBytes();
+    private RequestBody getRequestBody(S3UploadRequest s3UploadRequest) {
+        byte[] bytes = s3UploadRequest.getFileContent();
         return RequestBody.fromContentProvider(() -> new ByteArrayInputStream(bytes), bytes.length, s3UploadRequest.getContentType());
     }
 }

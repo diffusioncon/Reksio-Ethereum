@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 class S3ConfigDTO {
+    private String apiUrl;
     private String bucket;
     private String key;
     private String secret;
