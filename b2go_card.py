@@ -50,7 +50,7 @@ class Blocksec2goWrapper:
         return signature
 
 
-def init_blocksec2go_card():
+def init_blocksec2go_card(retrying=False):
     card = Blocksec2goWrapper()
-    card.init(key_id=1)
+    card.init(key_id=1, retrying=retrying)
     return card
