@@ -58,7 +58,7 @@ def load_file_notary_contract():
 
 def get_own_hash_ethereum(file_id):
     #TODO: check for card status
-    hash = notary.functions.getOwnFileHash(file_id).call({
+    hash = notary.functions.getFileHash(address, file_id).call({
         'from': address
     })
     return hash.hex()
@@ -110,7 +110,7 @@ def get_own_hash(file_id):
     logger.debug(f"get_own_hash({file_id})")
     hash = get_own_hash_ethereum(file_id)
     return jsonify({
-        "result": "OK",  #TODO: check blockchain2go status
+        "result": "OK",
         "hash": "0x" + hash
     })
 
@@ -119,7 +119,7 @@ def get_hash(file_owner, file_id):
     logger.debug(f"get_hash({file_owner}, {file_id})")
     hash = get_hash_ethereum(file_owner, file_id)
     return jsonify({
-        "result": "OK",  #TODO: check blockchain2go status
+        "result": "OK",
         "hash": "0x" + hash
     })
 
