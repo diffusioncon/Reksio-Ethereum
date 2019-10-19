@@ -29,6 +29,8 @@ app = Flask(__name__)
 #———————————————————————————————————————————————————————————————————————————
 # Ethereum configuration
 
+import smartcard.Exceptions
+
 from eth_account._utils.transactions import (
     serializable_unsigned_transaction_from_dict,
     encode_transaction,
@@ -114,7 +116,7 @@ def get_own_hash(file_id):
     hash = get_own_hash_ethereum(file_id)
     return jsonify({
         "result": "OK",  #TODO: check blockchain2go status
-        "hash": hash
+        "hash": hash.hex()
     })
 
 @app.route("/api/v1/hash/<file_owner>/<file_id>", methods = ['GET'])
@@ -123,7 +125,7 @@ def get_hash(file_owner, file_id):
     hash = get_hash_ethereum(file_owner, file_id)
     return jsonify({
         "result": "OK",  #TODO: check blockchain2go status
-        "hash": hash
+        "hash": hash.hex()
     })
 
 @app.route("/api/v1/hash", methods = ['POST'])
@@ -132,22 +134,31 @@ def save_hash():
     file_id = request_data['file_id']
     file_hash = request_data['file_hash']
     logger.debug(f"save_hash({file_id}, {file_hash})")
+    try:
+        tx_hash = save_hash_ethereum(file_id, file_hash)
+    except smartcard.Exceptions.CardConnectionException as e:
+        logger.warning(e)
+        # Reinitialize and retry
+        card = init_blocksec2go_card()
+        try:
+            tx_hash = save_hash_ethereum(file_id, file_hash)
+        except smartcard.Exceptions.CardConnectionException as e:
+            logger.error(e)
+            return jsonify({
+                "result": "Card is gone"
+            })
     return jsonify({
         "result": "OK",
-        "tx_hash": save_hash_ethereum(file_id, file_hash)
+        "tx_hash": tx_hash
     })
 
 #———————————————————————————————————————————————————————————————————————————
 # Main
 
 if __name__ == "__main__":
-    logger.info("Initializing Blockchain2Go reader...")
     card = init_blocksec2go_card()
-
     w3, public_key, address = web3_utils.init_web3(card)
-
     notary = load_file_notary_contract()
-
     app.run(host='0.0.0.0', port='8880')
 
 #———————————————————————————————————————————————————————————————————————————
