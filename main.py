@@ -121,9 +121,9 @@ def get_own_hash(file_id):
 
 @app.route("/api/v1/hash/<file_owner>/<file_id>", methods = ['GET'])
 def get_hash(file_owner, file_id):
-    logger.debug(f"get_own_hash({file_owner}, {file_id})")
+    logger.debug(f"get_hash({file_owner}, {file_id})")
     hash = get_hash_ethereum(file_owner, file_id)
-    print(hash[0])
+    logger.debug(hash[0])
     return jsonify({
         "result": "OK",  #TODO: check blockchain2go status
         "hash": bytes(hash, 'utf-8').hex()
