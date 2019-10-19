@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 class S3ParamsConverter {
 
-    S3UploadRequest convert(String filename, byte[] fileContent, HttpServletRequest httpRequest) {
+    S3UploadRequest convert(byte[] fileContent, HttpServletRequest httpRequest) {
         return S3UploadRequest.builder()
                               .key(httpRequest.getParameter("key"))
                               .tagging(httpRequest.getParameter("tagging"))
@@ -19,7 +19,6 @@ class S3ParamsConverter {
                               .awsAccessKeyId(httpRequest.getParameter("AWSAccessKeyId"))
                               .policy(httpRequest.getParameter("Policy"))
                               .submit(httpRequest.getParameter("submit"))
-                              .filename(filename)
                               .fileContent(fileContent)
                               .build();
     }

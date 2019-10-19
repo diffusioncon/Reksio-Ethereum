@@ -22,7 +22,7 @@ public class S3Controller {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest httpRequest) throws IOException {
-        S3UploadRequest s3UploadRequest = s3ParamsConverter.convert(file.getOriginalFilename(), file.getBytes(), httpRequest);
+        S3UploadRequest s3UploadRequest = s3ParamsConverter.convert(file.getBytes(), httpRequest);
 
         s3UploadProxy.forwardRequest(s3UploadRequest);
     }

@@ -19,7 +19,7 @@ public class S3UploadProxy {
 
     public void forwardRequest(S3UploadRequest s3UploadRequest) {
         String hexHash = fileHashCalculator.calculateHash(s3UploadRequest);
-        String filename = s3UploadRequest.getFilename();
+        String filename = s3UploadRequest.getKey();
         dltClient.saveInDlt(filename, hexHash);
 
         filesRepository.save(FileEntity.builder()

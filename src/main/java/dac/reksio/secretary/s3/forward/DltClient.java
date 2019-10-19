@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class DltClient {
 
+    public static final String HASH_ENDPOINT = "/api/v1/hash";
     private final DltConfigRepository dltConfigRepository;
     private final RestTemplate restTemplate;
 
@@ -19,6 +20,6 @@ public class DltClient {
         DltConfig dltConfig = dltConfigRepository.getOne(DltConfigRepository.ID);
         DltFileDto dltFileDto = new DltFileDto(originalFilename, hexHash);
 
-        restTemplate.postForEntity(dltConfig.getUri() + "/api/v1/hash", dltFileDto, String.class);
+        restTemplate.postForEntity(dltConfig.getUri() + HASH_ENDPOINT, dltFileDto, String.class);
     }
 }
