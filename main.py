@@ -119,7 +119,7 @@ def get_own_hash(file_id):
         "hash": hash
     })
 
-@app.route("/api/v1/hash/<address>/<file_id>", methods = ['GET'])
+@app.route("/api/v1/hash/<file_owner>/<file_id>", methods = ['GET'])
 def get_hash(file_owner, file_id):
     logger.debug(f"get_own_hash({file_owner}, {file_id})")
     hash = get_hash_ethereum(file_owner, file_id)
