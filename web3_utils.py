@@ -3,7 +3,10 @@
 import ecdsa
 import os
 
-from web3 import Web3
+from web3 import Web3, HTTPProvider
+
+import logging
+logger = logging.getLogger()
 
 
 generator = ecdsa.SECP256k1.generator
