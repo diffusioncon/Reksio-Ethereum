@@ -32,11 +32,12 @@ class S3ConfigControllerIT {
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON)
         )
-               .andExpect(status().isOk());
+               .andExpect(status().is2xxSuccessful());
 
         //then
         Optional<S3Config> s3Config = s3ConfigRepository.findById(S3ConfigRepository.ID);
         assertThat(s3Config).hasValue(S3Config.builder()
+                                              .id(S3ConfigRepository.ID)
                                               .apiUrl("someUrl")
                                               .key("someKey")
                                               .secret("someSecret")

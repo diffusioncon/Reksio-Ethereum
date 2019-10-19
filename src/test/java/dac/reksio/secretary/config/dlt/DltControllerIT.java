@@ -32,7 +32,7 @@ class DltControllerIT {
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON)
         )
-               .andExpect(status().isOk());
+               .andExpect(status().is2xxSuccessful());
 
         //then
         Optional<DltConfig> dltConfig = dltConfigRepository.findById(DltConfigRepository.ID);
