@@ -83,6 +83,8 @@ def save_hash_ethereum(file_id, file_hash):
     raw_unsigned_transaction['from'] = address
     raw_unsigned_transaction['to'] = notary.address
 
+    logger.debug(f"Transaction updated: {raw_unsigned_transaction}")
+
     unsigned_transaction = serializable_unsigned_transaction_from_dict(
         raw_unsigned_transaction
     )
