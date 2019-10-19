@@ -9,8 +9,8 @@ logger = logging.getLogger()
 from smartcard.System import readers
 
 
-# READER_ID = "Identiv Identiv uTrust 4701 F Dual Interface Reader [uTrust 4701 F CL Reader] (55041727202248) 01 00"
-READER_ID = "Identiv Identiv uTrust 4701 F Dual Interface Reader"
+READER_ID = "Identiv Identiv uTrust 4701 F Dual Interface Reader [uTrust 4701 F CL Reader] (55041727202248) 01 00"
+# READER_ID = "Identiv Identiv uTrust 4701 F Dual Interface Reader"
 
 class Blocksec2goWrapper:
     def __init__(self):
