@@ -10,7 +10,7 @@ while true; do
             filenameWithDateTime="${dateTime}.mp4"
             path=$(pwd)/$filenameWithDateTime
             mv $(pwd)/$filename $path
-            curl -F "key=$f" -F "file=@$path" -F "Content-Type=multipart/form-data" $SECRETARY_URL
+            curl -F "key=$filenameWithDateTime" -F "file=@$path" -F "Content-Type=multipart/form-data" $SECRETARY_URL
             rm $path
         fi
     done
