@@ -14,6 +14,7 @@ logger.setLevel(logging.DEBUG)
 
 import os
 import ecdsa
+import json
 
 # Settings are kept in .env
 from dotenv import load_dotenv
@@ -22,7 +23,7 @@ load_dotenv()
 #———————————————————————————————————————————————————————————————————————————
 # Flask app configuration
 
-from flask import Flask
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
@@ -43,12 +44,23 @@ import web3_utils
 CHAIN_ID = 42
 FAUCET_ADDRESS = "0x4d6Bb4ed029B33cF25D0810b029bd8B1A6bcAb7B"
 
-logging.info("Initializing Blockchain2Go reader...")
+logger.info("Initializing Blockchain2Go reader...")
 card = init_blocksec2go_card()
 
 w3, public_key, address = init_web3(card)
 
+notary = load_file_notary_contract('0x00')
+
 #———————————————————————————————————————————————————————————————————————————
+
+def load_file_notary_contract():
+    with open('deployed/fileNotary.json') as json_file:
+        contract = json.load(json_file)
+    notary = w3.eth.contract(
+        address=contract['address'],
+        abi=contract['abi']
+    )
+    return notary
 
 def init_web3(card):
 
@@ -60,23 +72,30 @@ def init_web3(card):
     w3 = Web3(HTTPProvider(infura_kovan_endpoint))
     if not w3.isConnected():
         raise Exception("Web3 did not connect")
-    logging.debug("web3 connected")
+    logger.debug("web3 connected")
 
     public_key = card.get_pub_key()
-    logging.debug(f"pubkey: {public_key.hex()}")
+    logger.debug(f"pubkey: {public_key.hex()}")
     address = web3_utils.address_from_pub_key(public_key)
-    logging.debug(f"address: {address}")
+    logger.debug(f"address: {address}")
 
     return w3, public_key, address
 
-def get_hash_ethereum():
-    pass
+def get_own_hash_ethereum(file_id):
+    #TODO: check for card status
+    hash = notary.functions.getOwnFileHash(file_id).call({
+        'from': address
+    })
+    return hash
 
+def save_hash_ethereum(file_id, file_hash):
 
-def save_hash_ethereum():
-    logging.debug("Getting nonce...")
+    # Prepare transaction data
+    transaction_data = notary.methods.setFileHash(arg, arg2).encodeABI() 
+
+    logger.debug("Getting nonce...")
     nonce = w3.eth.getTransactionCount(address)
-    logging.debug(f"Got nonce: {nonce}")
+    logger.debug(f"Got nonce: {nonce}")
 
     raw_unsigned_transaction = {
         "to": FAUCET_ADDRESS,
@@ -85,40 +104,47 @@ def save_hash_ethereum():
         "gasPrice": Web3.toWei("10", "gwei"),
         "nonce": nonce,
         "chainId": CHAIN_ID,
-        # "data": myContract.methods.myMethod(arg, arg2).encodeABI() 
+        "data": transaction_data,
     }
     unsigned_transaction = serializable_unsigned_transaction_from_dict(
         raw_unsigned_transaction
     )
     unsigned_transaction_hash = unsigned_transaction.hash()
-    logging.debug(f"unsigned transaction hash: {unsigned_transaction_hash.hex()}")
+    logger.debug(f"unsigned transaction hash: {unsigned_transaction_hash.hex()}")
 
     signature = card.generate_signature_der(unsigned_transaction_hash)
-    logging.debug(f"signature: {signature.hex()}")
+    logger.debug(f"signature: {signature.hex()}")
 
     v = web3_utils.get_v(signature, unsigned_transaction_hash, public_key, CHAIN_ID)
     r, s = web3_utils.sigdecode_der(signature)
 
-    logging.debug(f"r: {r}\ns: {s}")
-    logging.debug(f"v: {v}")
+    logger.debug(f"r: {r}\ns: {s}")
+    logger.debug(f"v: {v}")
     encoded_transaction = encode_transaction(unsigned_transaction, vrs=(v, r, s))
     tx_hash = w3.eth.sendRawTransaction(encoded_transaction)
-    logging.debug(f"tx hash: {tx_hash.hex()}")
+    logger.debug(f"tx hash: {tx_hash.hex()}")
 
     return tx_hash.hex()
 
 #———————————————————————————————————————————————————————————————————————————
 # Endpoints
 
-@app.route("/api/v1/hash/<address>/<file_id>", methods = ['GET'])
-def get_hash(address, file_id):
-    logging.debug("get_hash()")
-    return address + "/" + file_id
+@app.route("/api/v1/hash/<file_id>", methods = ['GET'])
+def get_own_hash(address, file_id):
+    logger.debug(f"get_own_hash({address}, {file_id})")
+    hash = get_own_hash_ethereum(file_id)
+    return jsonify({
+        "result": "OK",  #TODO: check blockchain2go status
+        "hash": hash
+    })
 
 @app.route("/api/v1/hash", methods = ['POST'])
 def save_hash():
-    logging.debug("save_hash()")
-    return save_hash_ethereum()
+    request_data = request.get_json()
+    file_id = request_data['file_id']
+    file_hash = request_data['file_hash']
+    logger.debug(f"save_hash({file_id}, {file_hash})")
+    return save_hash_ethereum(file_id, file_hash)
 
 #———————————————————————————————————————————————————————————————————————————
 # Main
