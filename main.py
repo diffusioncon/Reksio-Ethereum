@@ -133,7 +133,7 @@ def save_hash():
     logger.debug(f"save_hash({file_id}, {file_hash})")
     try:
         tx_hash = save_hash_ethereum(file_id, file_hash)
-    except (smartcard.Exceptions.CardConnectionException, blocksec2go.comm.base.CardError) as e:
+    except (smartcard.Exceptions.CardConnectionException, blocksec2go.comm.base.CardError, AttributeError) as e:
         logger.warning(e)
         try:
             # Reinitialize and retry
@@ -143,7 +143,7 @@ def save_hash():
                     "result": "Could not initialize card"
                 })
             tx_hash = save_hash_ethereum(file_id, file_hash)
-        except (smartcard.Exceptions.CardConnectionException, blocksec2go.comm.base.CardError) as e:
+        except (smartcard.Exceptions.CardConnectionException, blocksec2go.comm.base.CardError, AttributeError) as e:
             logger.error(e)
             return jsonify({
                 "result": "Card is gone"
