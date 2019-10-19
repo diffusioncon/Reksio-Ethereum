@@ -2,7 +2,6 @@ __pycache__
 venv
 .env
 .secret
-deployed/
 build/
 node_modules
 package-lock.json
