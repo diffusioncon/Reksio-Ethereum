@@ -1,5 +1,7 @@
+
 import ecdsa
 from web3 import Web3
+
 
 generator = ecdsa.SECP256k1.generator
 
@@ -54,7 +56,5 @@ def address_from_pub_key(pub_key):
 
 
 def get_v(signature, unsigned_transaction_hash, pub_key, chain_id):
-    recovery_id = utils.find_recovery_id(
-        signature, unsigned_transaction_hash, pub_key
-    )
+    recovery_id = utils.find_recovery_id(signature, unsigned_transaction_hash, pub_key)
     return 35 + recovery_id + (chain_id * 2)
