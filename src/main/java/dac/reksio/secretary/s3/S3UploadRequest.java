@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 @RequiredArgsConstructor
 public class S3UploadRequest {
-
     private final String key;
     private final String tagging;
     private final String successActionRedirect;
