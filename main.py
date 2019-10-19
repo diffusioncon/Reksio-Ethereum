@@ -135,7 +135,7 @@ def save_hash():
     except smartcard.Exceptions.CardConnectionException as e:
         logger.warning(e)
         # Reinitialize and retry
-        card = init_blocksec2go_card()
+        card = init_blocksec2go_card(retrying=True)
         try:
             tx_hash = save_hash_ethereum(file_id, file_hash)
         except smartcard.Exceptions.CardConnectionException as e:
