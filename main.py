@@ -61,6 +61,13 @@ def get_own_hash_ethereum(file_id):
     })
     return str(hash)
 
+def get_hash_ethereum(address, file_id):
+    #TODO: check for card status
+    hash = notary.functions.getFileHash(address, file_id).call({
+        'from': address
+    })
+    return str(hash)
+
 def save_hash_ethereum(file_id, file_hash):
 
     # Prepare transaction data
@@ -107,6 +114,15 @@ def save_hash_ethereum(file_id, file_hash):
 def get_own_hash(file_id):
     logger.debug(f"get_own_hash({file_id})")
     hash = get_own_hash_ethereum(file_id)
+    return jsonify({
+        "result": "OK",  #TODO: check blockchain2go status
+        "hash": hash
+    })
+
+@app.route("/api/v1/hash/<address>/<file_id>", methods = ['GET'])
+def get_hash(file_owner, file_id):
+    logger.debug(f"get_own_hash({file_owner}, {file_id})")
+    hash = get_hash_ethereum(file_owner, file_id)
     return jsonify({
         "result": "OK",  #TODO: check blockchain2go status
         "hash": hash
