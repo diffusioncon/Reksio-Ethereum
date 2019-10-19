@@ -132,7 +132,10 @@ def save_hash():
     file_id = request_data['file_id']
     file_hash = request_data['file_hash']
     logger.debug(f"save_hash({file_id}, {file_hash})")
-    return save_hash_ethereum(file_id, file_hash)
+    return jsonify({
+        "result": "OK",
+        "tx_hash": save_hash_ethereum(file_id, file_hash)
+    })
 
 #———————————————————————————————————————————————————————————————————————————
 # Main
