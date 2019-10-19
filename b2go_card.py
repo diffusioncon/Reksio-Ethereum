@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from smartcard.System import readers
 import blocksec2go
 import string
 import time
@@ -7,18 +8,17 @@ import time
 import logging
 logger = logging.getLogger()
 
-from smartcard.System import readers
-
 
 READER_ID = "Identiv Identiv uTrust 4701 F Dual Interface Reader [uTrust 4701 F CL Reader] (55041727202248) 01 00"
 # READER_ID = "Identiv Identiv uTrust 4701 F Dual Interface Reader"
+
 
 class Blocksec2goWrapper:
     def __init__(self):
         self.reader = None
         self.key_id = None
 
-    def init(self, key_id=1):
+    def init(self, key_id=1, retrying=False):
         self.key_id = key_id
         while self.reader == None:
             try:
@@ -28,6 +28,8 @@ class Blocksec2goWrapper:
                 if "No reader found" != str(details) and "No card on reader" != str(details):
                     logger.error(details)
                     raise Exception(f"Reader error: {details}")
+                if retrying:
+                    return None
                 time.sleep(1)
         try:
             blocksec2go.select_app(self.reader)
@@ -46,6 +48,7 @@ class Blocksec2goWrapper:
             self.reader, self.key_id, data
         )
         return signature
+
 
 def init_blocksec2go_card():
     card = Blocksec2goWrapper()
