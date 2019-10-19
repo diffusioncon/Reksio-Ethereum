@@ -80,7 +80,7 @@ def save_hash_ethereum(file_id, file_hash):
     logger.debug(f"Got nonce: {nonce}")
 
     raw_unsigned_transaction['nonce'] = nonce
-    raw_unsigned_transaction['from'] = address
+    # raw_unsigned_transaction['from'] = address
     raw_unsigned_transaction['to'] = notary.address
 
     logger.debug(f"Transaction updated: {raw_unsigned_transaction}")
