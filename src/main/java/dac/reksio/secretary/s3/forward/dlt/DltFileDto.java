@@ -1,4 +1,4 @@
-package dac.reksio.secretary.s3.forward;
+package dac.reksio.secretary.s3.forward.dlt;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;

@@ -1,10 +1,12 @@
 package dac.reksio.secretary.files;
 
 import dac.reksio.secretary.exception.ResourceNotFoundException;
+import dac.reksio.secretary.s3.forward.dlt.DltClient;
+import dac.reksio.secretary.s3.forward.dlt.DltHashDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/files")
@@ -12,15 +14,31 @@ import java.util.List;
 class FileController {
 
     private final FileRepository fileRepository;
+    private final DltClient dltClient;
+    private final FileHashUpdater fileHashUpdater;
 
     @GetMapping
-    List<FileEntity> getFiles() {
-        return fileRepository.findAll();
+    Page<FileDto> getFiles(Pageable pageable) {
+        return fileRepository.findAll(pageable)
+                    .map(this::convertToDto);
     }
 
     @PostMapping("/{filename}")
-    FileEntity verifyFile(@PathVariable String filename) {
-        return fileRepository.findByFilename(filename)
-                             .orElseThrow(ResourceNotFoundException::new);
+    FileDto verifyFile(@PathVariable String filename) {
+        FileEntity fileEntity = fileRepository.findByFilename(filename)
+                                              .orElseThrow(ResourceNotFoundException::new);
+        FileEntity updatedFile = fileHashUpdater.updateFile(fileEntity);
+        return convertToDto(updatedFile);
+    }
+
+    private FileDto convertToDto(FileEntity fileEntity) {
+        DltHashDto hashOfFile = dltClient.getHashOfFile(fileEntity.getFilename());
+        boolean isOk = hashOfFile.getHash().equalsIgnoreCase(fileEntity.getHash());
+        return FileDto.builder()
+                      .filename(fileEntity.getFilename())
+                      .hash(fileEntity.getHash())
+                      .uploadDateTime(fileEntity.getUploadDateTime())
+                      .hashIsOk(isOk)
+                      .build();
     }
 }

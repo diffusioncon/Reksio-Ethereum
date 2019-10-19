@@ -3,8 +3,6 @@ package dac.reksio.secretary.s3.forward;
 import dac.reksio.secretary.config.s3.S3ConfigRepository;
 import dac.reksio.secretary.s3.S3UploadRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -12,18 +10,17 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 
-@Component
 @RequiredArgsConstructor
-public class ReksioS3Client {
+class ReksioS3Client implements ReksioStorageClient {
 
     private final S3ConfigRepository s3ConfigRepository;
 
-    PutObjectResponse uploadFile(S3UploadRequest s3UploadRequest) {
+    @Override
+    public void uploadFile(S3UploadRequest s3UploadRequest) {
         var s3Configuration = s3ConfigRepository.getOne(S3ConfigRepository.ID);
         var credentialsProvider = StaticCredentialsProvider.create(
                 AwsBasicCredentials.create(s3Configuration.getKey(), s3Configuration.getSecret())
@@ -46,7 +43,12 @@ public class ReksioS3Client {
                                                .build();
 
         RequestBody requestBody = getRequestBody(s3UploadRequest);
-        return client.putObject(putObjectRequest, requestBody);
+        client.putObject(putObjectRequest, requestBody);
+    }
+
+    @Override
+    public byte[] getFileContent(String filename) {
+        return new byte[0];
     }
 
     private RequestBody getRequestBody(S3UploadRequest s3UploadRequest) {
