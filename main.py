@@ -71,24 +71,18 @@ def get_hash_ethereum(address, file_id):
 def save_hash_ethereum(file_id, file_hash):
 
     # Prepare transaction data
-    transaction_data = notary.functions.setFileHash(file_id, file_hash).buildTransaction()
+    raw_unsigned_transaction = notary.functions.setFileHash(file_id, file_hash).buildTransaction()
 
-    print(transaction_data) 
+    logger.debug(f"Transaction built: {transaction_data}")
 
     logger.debug("Getting nonce...")
     nonce = w3.eth.getTransactionCount(address)
     logger.debug(f"Got nonce: {nonce}")
 
-    raw_unsigned_transaction = {
-        "from": address,
-        "to": notary.address,
-        "value": Web3.toWei("0.0001", "ether"),
-        "gas": 21000,
-        "gasPrice": Web3.toWei("10", "gwei"),
-        "nonce": nonce,
-        "chainId": CHAIN_ID,
-        "data": transaction_data,
-    }
+    raw_unsigned_transaction['nonce'] = nonce
+    raw_unsigned_transaction['from'] = address
+    raw_unsigned_transaction['to'] = notary.address
+
     unsigned_transaction = serializable_unsigned_transaction_from_dict(
         raw_unsigned_transaction
     )
