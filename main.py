@@ -123,6 +123,7 @@ def get_own_hash(file_id):
 def get_hash(file_owner, file_id):
     logger.debug(f"get_own_hash({file_owner}, {file_id})")
     hash = get_hash_ethereum(file_owner, file_id)
+    logging.debug(f"hash = {hash}")
     return jsonify({
         "result": "OK",  #TODO: check blockchain2go status
         "hash": hash.hex()
