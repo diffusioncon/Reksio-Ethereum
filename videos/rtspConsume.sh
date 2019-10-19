@@ -1,6 +1,6 @@
 #!/bin/sh
 
-openRTSP -D 1 -c -B 10000000 -b 10000000 -4 -Q -F CAM -P 10 -t rtsp://$RTSP_IP:$RTSP_PORT/$RTSP_RESOURCE_NAME &
+openRTSP -D 1 -c -B 10000000 -b 10000000 -4 -Q -F CAM -P $VIDEO_DURATION -t rtsp://$RTSP_IP:$RTSP_PORT/$RTSP_RESOURCE_NAME &
 
 while true; do
     for file in ./*; do
