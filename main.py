@@ -1,20 +1,39 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#———————————————————————————————————————————————————————————————————————————
+# Logging configuration
+
+import logging
+logging.basicConfig(format="%(levelname)s:%(asctime)s:%(name)s:%(message)s")
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+#———————————————————————————————————————————————————————————————————————————
+# General Imports
+
 import os
 import ecdsa
-import logging
 
-# Ethereum stuff
+# Settings are kept in .env
+from dotenv import load_dotenv
+load_dotenv()
+
+#———————————————————————————————————————————————————————————————————————————
+# Flask app configuration
+
+from flask import Flask
+
+app = Flask(__name__)
+
+#———————————————————————————————————————————————————————————————————————————
+# Ethereum configuration
+
 from eth_account._utils.transactions import (
     serializable_unsigned_transaction_from_dict,
     encode_transaction,
 )
 from web3 import Web3, HTTPProvider
-
-# Settings are kept in .env
-from dotenv import load_dotenv
-load_dotenv()
 
 # Internal utilities
 from card import Blocksec2goWrapper
@@ -24,12 +43,17 @@ import web3_utils
 CHAIN_ID = 42
 FAUCET_ADDRESS = "0x4d6Bb4ed029B33cF25D0810b029bd8B1A6bcAb7B"
 
+logging.info("Initializing Blockchain2Go reader...")
+card = init_blocksec2go_card()
+
+w3, public_key, address = init_web3(card)
+
+#———————————————————————————————————————————————————————————————————————————
 
 def init_blocksec2go_card():
     card = Blocksec2goWrapper()
     card.init(key_id=1)
     return card
-
 
 def init_web3(card):
 
@@ -50,8 +74,7 @@ def init_web3(card):
 
     return w3, public_key, address
 
-
-def run_transaction(w3, public_key, address):
+def run_transaction():
     print("Getting nonce...")
     nonce = w3.eth.getTransactionCount(address)
     print("Got nonce: {}".format(nonce))
@@ -82,15 +105,25 @@ def run_transaction(w3, public_key, address):
     tx_hash = w3.eth.sendRawTransaction(encoded_transaction)
     print("tx hash: {}".format(tx_hash.hex()))
 
+    return tx_hash.hex()
 
-def main():
-    print("Initializing reader...")
-    card = init_blocksec2go_card()
-    print("Reader initialized")
-    
-    w3, public_key, address = init_web3(card)
-    run_transaction(w3, public_key, address)
+#———————————————————————————————————————————————————————————————————————————
+# Endpoints
 
+@app.route("/api/v1/hash/<address>/<file_id>", methods = ['GET'])
+def get_hash(address, file_id):
+    logging.debug("get_hash()")
+    return address + "/" + file_id
+
+@app.route("/api/v1/hash", methods = ['POST'])
+def save_hash():
+    logging.debug("save_hash()")
+    return run_transaction()
+
+#———————————————————————————————————————————————————————————————————————————
+# Main
 
 if __name__ == "__main__":
-    main()
+    app.run()
+
+#———————————————————————————————————————————————————————————————————————————
