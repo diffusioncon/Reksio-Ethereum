@@ -13,8 +13,8 @@ import java.time.Instant;
 @Entity
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class FileEntity {
     @Id
     @GeneratedValue
