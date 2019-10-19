@@ -20,3 +20,13 @@ services:
       - "postgres:postgres"
     ports:
       - "8080:8080"
+
+  rtsp-client:
+    image: registry.gitlab.com/bettersolutions/reksio/rtsp-client:rtsp-client
+    depends_on:
+      - secretary
+    environment:
+      RTSP_IP: 192.168.88.10
+      RTSP_PORT: 8554
+      RTSP_RESOURCE_NAME: test
+      SECRETARY_URL: secretary:8080/
