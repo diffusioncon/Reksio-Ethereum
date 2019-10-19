@@ -111,7 +111,7 @@ def get_own_hash(file_id):
     hash = get_own_hash_ethereum(file_id)
     return jsonify({
         "result": "OK",  #TODO: check blockchain2go status
-        "hash": hash
+        "hash": "0x" + hash
     })
 
 @app.route("/api/v1/hash/<file_owner>/<file_id>", methods = ['GET'])
@@ -120,7 +120,7 @@ def get_hash(file_owner, file_id):
     hash = get_hash_ethereum(file_owner, file_id)
     return jsonify({
         "result": "OK",  #TODO: check blockchain2go status
-        "hash": hash
+        "hash": "0x" + hash
     })
 
 @app.route("/api/v1/hash", methods = ['POST'])
