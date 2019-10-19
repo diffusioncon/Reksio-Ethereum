@@ -79,7 +79,7 @@ def init_web3(card):
 
     public_key = card.get_pub_key()
     logger.debug(f"pubkey: {public_key.hex()}")
-    address = web3_utils.address_from_pub_key(public_key)
+    address = address_from_pub_key(public_key)
     logger.debug(f"address: {address}")
 
     return w3, public_key, address
