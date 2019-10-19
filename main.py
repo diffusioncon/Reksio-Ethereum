@@ -43,7 +43,6 @@ import web3_utils
 
 # kovan testnet
 CHAIN_ID = 42
-# FAUCET_ADDRESS = "0x4d6Bb4ed029B33cF25D0810b029bd8B1A6bcAb7B"
 
 #———————————————————————————————————————————————————————————————————————————
 
@@ -58,8 +57,8 @@ def load_file_notary_contract():
 
 def get_own_hash_ethereum(file_id):
     #TODO: check for card status
-    hash = notary.functions.getFileHash(address, file_id).call({
-        'from': address
+    hash = notary.functions.getFileHash(card_address, file_id).call({
+        'from': card_address
     })
     return hash.hex()
 
@@ -79,23 +78,24 @@ def save_hash_ethereum(file_id, file_hash):
     logger.debug(f"Got nonce: {nonce}")
 
     raw_unsigned_transaction['nonce'] = nonce
-    # raw_unsigned_transaction['from'] = address
     raw_unsigned_transaction['to'] = notary.address
 
+    # Serialize the transaction
     unsigned_transaction = serializable_unsigned_transaction_from_dict(
         raw_unsigned_transaction
     )
     unsigned_transaction_hash = unsigned_transaction.hash()
     logger.debug(f"unsigned transaction hash: {unsigned_transaction_hash.hex()}")
 
+    # Sign the transaction
     signature = card.generate_signature_der(unsigned_transaction_hash)
     logger.debug(f"signature: {signature.hex()}")
 
     v = web3_utils.get_v(signature, unsigned_transaction_hash, public_key, CHAIN_ID)
     r, s = web3_utils.sigdecode_der(signature)
 
-    logger.debug(f"r: {r}\ns: {s}")
-    logger.debug(f"v: {v}")
+    # logger.debug(f"r: {r}\ns: {s}")
+    # logger.debug(f"v: {v}")
     encoded_transaction = encode_transaction(unsigned_transaction, vrs=(v, r, s))
     tx_hash = w3.eth.sendRawTransaction(encoded_transaction)
     logger.debug(f"tx hash: {tx_hash.hex()}")
@@ -152,7 +152,8 @@ def save_hash():
 
 if __name__ == "__main__":
     card = init_blocksec2go_card()
-    w3, public_key, address = web3_utils.init_web3(card)
+    w3, public_key, card_address = web3_utils.init_web3(card)
+    logger.info(f"Using hardware wallet with address {card_address}")
     notary = load_file_notary_contract()
     app.run(host='0.0.0.0', port='8880')
 
