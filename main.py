@@ -138,7 +138,7 @@ def save_hash():
         try:
             # Reinitialize and retry
             card = init_blocksec2go_card(retrying=True)
-            if not card:
+            if card is None:
                 return jsonify({
                     "result": "Could not initialize card"
                 })
