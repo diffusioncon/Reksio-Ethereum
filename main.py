@@ -30,6 +30,7 @@ app = Flask(__name__)
 # Ethereum configuration
 
 import smartcard.Exceptions
+import blocksec2go.comm.base
 
 from eth_account._utils.transactions import (
     serializable_unsigned_transaction_from_dict,
@@ -142,7 +143,7 @@ def save_hash():
             })
         try:
             tx_hash = save_hash_ethereum(file_id, file_hash)
-        except smartcard.Exceptions.CardConnectionException as e:
+        except (smartcard.Exceptions.CardConnectionException, blocksec2go.comm.base.CardError) as e:
             logger.error(e)
             return jsonify({
                 "result": "Card is gone"
