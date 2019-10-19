@@ -1,0 +1,22 @@
+version: "3.1"
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: secretary
+      POSTGRES_DB: secretary
+      POSTGRES_USER: secretary
+    ports:
+      - "5432:5432"
+
+  secretary:
+    image: registry.gitlab.com/bettersolutions/reksio/secretary:latest
+    depends_on:
+      - postgres
+    volumes:
+      - ./config/secretary/application.properties:/config/application.properties
+    links:
+      - "postgres:postgres"
+    ports:
+      - "8080:8080"
