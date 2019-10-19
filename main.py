@@ -125,6 +125,7 @@ def get_hash(file_owner, file_id):
 
 @app.route("/api/v1/hash", methods = ['POST'])
 def save_hash():
+    global card
     request_data = request.get_json()
     file_id = request_data['file_id']
     file_hash = request_data['file_hash']
