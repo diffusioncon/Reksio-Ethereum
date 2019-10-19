@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
-@PropertySource(value = "file:/config/application.properties", ignoreResourceNotFound = true)
+@PropertySource(value = "files:/config/application.properties", ignoreResourceNotFound = true)
 public class SecretaryApplication {
 
     public static void main(String[] args) {

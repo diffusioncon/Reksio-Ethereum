@@ -18,7 +18,7 @@ public class S3Controller {
     private final S3ParamsConverter s3ParamsConverter;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest httpRequest) {
+    public void uploadFile(@RequestParam("files") MultipartFile file, HttpServletRequest httpRequest) {
         S3UploadRequest s3UploadRequest = s3ParamsConverter.convert(file, httpRequest);
 
         log.info("Request: {}", s3UploadRequest);

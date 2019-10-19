@@ -21,8 +21,8 @@ class S3ControllerTest {
     void shouldUploadFileToS3() throws Exception {
         // given
         var multipart = multipart("/")
-                .file(new MockMultipartFile("file", "s3.txt",
-                        "text/plain", "s3 file".getBytes()))
+                .file(new MockMultipartFile("files", "s3.txt",
+                        "text/plain", "s3 files".getBytes()))
                 .param("key", "acl")
                 .param("tagging", "<Tagging><TagSet><Tag><Key>Tag Name</Key><Value>Tag Value</Value></Tag></TagSet></Tagging>")
                 .param("success_action_redirect", "success_action_redirect")
