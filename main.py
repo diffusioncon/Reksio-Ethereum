@@ -74,7 +74,7 @@ def save_hash_ethereum(file_id, file_hash):
     # Prepare transaction data
     raw_unsigned_transaction = notary.functions.setFileHash(file_id, file_hash).buildTransaction()
 
-    nonce = w3.eth.getTransactionCount(address)
+    nonce = w3.eth.getTransactionCount(card_address)
     logger.debug(f"Got nonce: {nonce}")
 
     raw_unsigned_transaction['nonce'] = nonce
