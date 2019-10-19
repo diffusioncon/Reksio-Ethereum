@@ -1,0 +1,15 @@
+package dac.reksio.secretary.config.s3;
+
+import org.springframework.stereotype.Component;
+
+@Component
+class S3ConfigDTOConverter {
+
+    S3Config fromDTO(S3ConfigDTO s3ConfigDTO) {
+        return S3Config.builder()
+                       .id(S3ConfigRepository.ID)
+                       .apiUrl(s3ConfigDTO.getApiUrl())
+                       .build();
+    }
+
+}
