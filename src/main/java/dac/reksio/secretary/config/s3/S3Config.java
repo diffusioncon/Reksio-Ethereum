@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import software.amazon.awssdk.regions.Region;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -13,10 +14,12 @@ import javax.persistence.Id;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-class S3Config {
+public class S3Config {
     @Id
     private String id;
     private String apiUrl;
     private String key;
     private String secret;
+    private String region;
+    private String bucket;
 }

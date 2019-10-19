@@ -15,7 +15,7 @@ import java.time.Instant;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-class FileEntity {
+public class FileEntity {
     @Id
     @GeneratedValue
     private Long id;

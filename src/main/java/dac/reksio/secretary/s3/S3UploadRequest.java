@@ -18,5 +18,5 @@ public class S3UploadRequest {
     private final String awsAccessKeyId;
     private final String policy;
     private final String submit;
-    private final MultipartFile file;
+    private final byte[] fileContent;
 }
