@@ -41,7 +41,7 @@ import web3_utils
 
 # kovan testnet
 CHAIN_ID = 42
-FAUCET_ADDRESS = "0x4d6Bb4ed029B33cF25D0810b029bd8B1A6bcAb7B"
+# FAUCET_ADDRESS = "0x4d6Bb4ed029B33cF25D0810b029bd8B1A6bcAb7B"
 
 #———————————————————————————————————————————————————————————————————————————
 
@@ -64,14 +64,15 @@ def get_own_hash_ethereum(file_id):
 def save_hash_ethereum(file_id, file_hash):
 
     # Prepare transaction data
-    transaction_data = notary.methods.setFileHash(arg, arg2).encodeABI() 
+    transaction_data = notary.methods.setFileHash(file_id, file_hash).encodeABI() 
 
     logger.debug("Getting nonce...")
     nonce = w3.eth.getTransactionCount(address)
     logger.debug(f"Got nonce: {nonce}")
 
     raw_unsigned_transaction = {
-        "to": FAUCET_ADDRESS,
+        "from": address,
+        "to": notary.address,
         "value": Web3.toWei("0.0001", "ether"),
         "gas": 21000,
         "gasPrice": Web3.toWei("10", "gwei"),
