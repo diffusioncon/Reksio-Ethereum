@@ -58,3 +58,22 @@ def address_from_pub_key(pub_key):
 def get_v(signature, unsigned_transaction_hash, pub_key, chain_id):
     recovery_id = utils.find_recovery_id(signature, unsigned_transaction_hash, pub_key)
     return 35 + recovery_id + (chain_id * 2)
+
+def init_web3(card):
+
+    # Infura is used to access the Ethereum network
+    infura_kovan_endpoint = os.getenv("INFURA_KOVAN_ENDPOINT")
+    if infura_kovan_endpoint is None:
+        raise Exception("Endpoint not defined in the env")
+
+    w3 = Web3(HTTPProvider(infura_kovan_endpoint))
+    if not w3.isConnected():
+        raise Exception("Web3 did not connect")
+    logger.debug("web3 connected")
+
+    public_key = card.get_pub_key()
+    logger.debug(f"pubkey: {public_key.hex()}")
+    address = web3_utils.address_from_pub_key(public_key)
+    logger.debug(f"address: {address}")
+
+    return w3, public_key, address

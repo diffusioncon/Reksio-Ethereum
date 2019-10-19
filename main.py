@@ -47,7 +47,7 @@ FAUCET_ADDRESS = "0x4d6Bb4ed029B33cF25D0810b029bd8B1A6bcAb7B"
 logger.info("Initializing Blockchain2Go reader...")
 card = init_blocksec2go_card()
 
-w3, public_key, address = init_web3(card)
+w3, public_key, address = web3_utils.init_web3(card)
 
 notary = load_file_notary_contract('0x00')
 
@@ -61,25 +61,6 @@ def load_file_notary_contract():
         abi=contract['abi']
     )
     return notary
-
-def init_web3(card):
-
-    # Infura is used to access the Ethereum network
-    infura_kovan_endpoint = os.getenv("INFURA_KOVAN_ENDPOINT")
-    if infura_kovan_endpoint is None:
-        raise Exception("Endpoint not defined in the env")
-
-    w3 = Web3(HTTPProvider(infura_kovan_endpoint))
-    if not w3.isConnected():
-        raise Exception("Web3 did not connect")
-    logger.debug("web3 connected")
-
-    public_key = card.get_pub_key()
-    logger.debug(f"pubkey: {public_key.hex()}")
-    address = web3_utils.address_from_pub_key(public_key)
-    logger.debug(f"address: {address}")
-
-    return w3, public_key, address
 
 def get_own_hash_ethereum(file_id):
     #TODO: check for card status
