@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 import blocksec2go
 import string

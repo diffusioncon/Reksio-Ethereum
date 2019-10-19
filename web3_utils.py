@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
 
 import ecdsa
+import os
+
 from web3 import Web3
 
 

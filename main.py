@@ -12,7 +12,6 @@ logger.setLevel(logging.DEBUG)
 #———————————————————————————————————————————————————————————————————————————
 # General Imports
 
-import os
 import ecdsa
 import json
 
