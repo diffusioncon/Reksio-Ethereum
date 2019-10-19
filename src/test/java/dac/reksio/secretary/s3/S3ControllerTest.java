@@ -1,9 +1,11 @@
 package dac.reksio.secretary.s3;
 
+import dac.reksio.secretary.s3.forward.ReksioS3Client;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -16,6 +18,8 @@ class S3ControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @MockBean
+    private ReksioS3Client reksioS3Client;
 
     @Test
     void shouldUploadFileToS3() throws Exception {

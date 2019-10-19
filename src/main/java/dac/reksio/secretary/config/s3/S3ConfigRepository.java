@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-interface S3ConfigRepository extends JpaRepository<S3Config, String> {
+public interface S3ConfigRepository extends JpaRepository<S3Config, String> {
     String ID = "s3";
 }

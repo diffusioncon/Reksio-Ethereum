@@ -38,8 +38,8 @@ class S3ConfigControllerIT {
         Optional<S3Config> s3Config = s3ConfigRepository.findById(S3ConfigRepository.ID);
         assertThat(s3Config).hasValue(S3Config.builder()
                                               .id(S3ConfigRepository.ID)
-                                              .apiUrl("someUrl")
                                               .key("someKey")
+                                              .bucket("bucket")
                                               .secret("someSecret")
                                               .build());
     }
