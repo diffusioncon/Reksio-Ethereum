@@ -104,8 +104,8 @@ def save_hash_ethereum(file_id, file_hash):
 # Endpoints
 
 @app.route("/api/v1/hash/<file_id>", methods = ['GET'])
-def get_own_hash(address, file_id):
-    logger.debug(f"get_own_hash({address}, {file_id})")
+def get_own_hash(file_id):
+    logger.debug(f"get_own_hash({file_id})")
     hash = get_own_hash_ethereum(file_id)
     return jsonify({
         "result": "OK",  #TODO: check blockchain2go status
