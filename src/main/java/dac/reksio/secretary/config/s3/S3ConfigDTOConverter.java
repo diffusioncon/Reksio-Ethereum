@@ -9,6 +9,8 @@ class S3ConfigDTOConverter {
         return S3Config.builder()
                        .id(S3ConfigRepository.ID)
                        .apiUrl(s3ConfigDTO.getApiUrl())
+                       .key(s3ConfigDTO.getKey())
+                       .secret(s3ConfigDTO.getSecret())
                        .build();
     }
 

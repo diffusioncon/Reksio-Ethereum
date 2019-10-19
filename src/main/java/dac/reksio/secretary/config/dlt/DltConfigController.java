@@ -1,11 +1,8 @@
 package dac.reksio.secretary.config.dlt;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,9 +12,9 @@ class DltConfigController {
     private final DltConfigSaver dltConfigSaver;
 
     @PutMapping
-    public ResponseEntity save(@RequestBody DltConfigDTO dltConfigDTO) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void save(@RequestBody DltConfigDTO dltConfigDTO) {
         dltConfigSaver.save(dltConfigDTO);
-        return ResponseEntity.ok().build();
     }
 
 }

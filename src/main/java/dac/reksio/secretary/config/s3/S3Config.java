@@ -17,4 +17,6 @@ class S3Config {
     @Id
     private String id;
     private String apiUrl;
+    private String key;
+    private String secret;
 }
