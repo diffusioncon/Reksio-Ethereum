@@ -135,13 +135,13 @@ def save_hash():
         tx_hash = save_hash_ethereum(file_id, file_hash)
     except (smartcard.Exceptions.CardConnectionException, blocksec2go.comm.base.CardError) as e:
         logger.warning(e)
-        # Reinitialize and retry
-        card = init_blocksec2go_card(retrying=True)
-        if not card:
-            return jsonify({
-                "result": "Could not initialize card"
-            })
         try:
+            # Reinitialize and retry
+            card = init_blocksec2go_card(retrying=True)
+            if not card:
+                return jsonify({
+                    "result": "Could not initialize card"
+                })
             tx_hash = save_hash_ethereum(file_id, file_hash)
         except (smartcard.Exceptions.CardConnectionException, blocksec2go.comm.base.CardError) as e:
             logger.error(e)
