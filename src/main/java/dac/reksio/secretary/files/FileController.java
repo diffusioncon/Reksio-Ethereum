@@ -4,7 +4,6 @@ import com.google.common.net.HttpHeaders;
 import dac.reksio.secretary.exception.ResourceNotFoundException;
 import dac.reksio.secretary.s3.forward.ReksioStorageClient;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
