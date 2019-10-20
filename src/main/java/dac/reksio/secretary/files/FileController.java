@@ -1,7 +1,6 @@
 package dac.reksio.secretary.files;
 
 import dac.reksio.secretary.exception.ResourceNotFoundException;
-import dac.reksio.secretary.s3.forward.dlt.DltService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 class FileController {
 
     private final FileRepository fileRepository;
-    private final DltService dltService;
     private final FileHashUpdater fileHashUpdater;
     private final FileConverter fileConverter;
 
