@@ -11,7 +11,7 @@ public class FileConverter {
     private final DltService dltService;
 
     public FileDto convertToDto(FileEntity fileEntity) {
-        DltHashDto hashOfFile = dltService.getHashOfFile(fileEntity.getFilename());
+        DltHashDto hashOfFile = dltService.getHashOfFile(fileEntity);
         boolean isOk = hashOfFile.getHash().equalsIgnoreCase(fileEntity.getHash());
         return FileDto.builder()
                       .filename(fileEntity.getFilename())
@@ -19,6 +19,7 @@ public class FileConverter {
                       .uploadDateTime(fileEntity.getUploadDateTime())
                       .hashIsOk(isOk)
                       .transactionHash(fileEntity.getTransactionHash())
+                      .hashCalculationDateTime(fileEntity.getHashCalculationDateTime())
                       .build();
     }
 

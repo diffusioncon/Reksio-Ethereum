@@ -23,4 +23,5 @@ public class FileEntity {
     private Instant uploadDateTime;
     private String hash;
     private String transactionHash;
+    private Instant hashCalculationDateTime;
 }
