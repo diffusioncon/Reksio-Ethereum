@@ -58,7 +58,9 @@ const Table: React.FC<TableProps> = ({
             return (
               <TableRow key={file.filename}>
                 <TableCell component="th" scope="row">
-                  {file.filename}
+                  <a href={`/api/files/${file.filename}`} target="_blank" rel="noopener noreferrer">
+                    {file.filename}
+                  </a>
                 </TableCell>
                 <HashTableCell align="center">
                   <Tooltip title={file.hash} interactive>

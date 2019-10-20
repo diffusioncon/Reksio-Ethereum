@@ -5,6 +5,9 @@ import { FileInfo } from '../../types/fileInfo';
 import Table from './table';
 import { Pageable } from '../../types/pageable';
 import { FilesWs } from '../../ws/files-ws';
+import { IconButton } from '@material-ui/core';
+import SettingsIcon from '@material-ui/icons/Settings';
+import { Redirect } from 'react-router-dom';
 
 interface MainViewState {
   files: FileInfo[];
@@ -13,6 +16,7 @@ interface MainViewState {
   totalPages: number;
   totalCount: number;
   isLoading: boolean;
+  redirectToConfig: boolean;
 }
 
 export class MainView extends React.Component {
@@ -23,6 +27,7 @@ export class MainView extends React.Component {
     totalPages: 0,
     totalCount: 0,
     isLoading: true,
+    redirectToConfig: false,
   };
 
   componentDidMount() {
@@ -36,9 +41,7 @@ export class MainView extends React.Component {
     const { currentPage, pageSize } = this.state;
 
     try {
-      const response = await axios.get(
-        `/api/files?page=${currentPage}&size=${pageSize}&sort=uploadDateTime&uploadDateTime.dir=desc`
-      );
+      const response = await axios.get(`/api/files?page=${currentPage}&size=${pageSize}&sort=uploadDateTime,desc`);
       const fetchedFiles = response.data as Pageable<FileInfo>;
       const newState = {
         files: fetchedFiles.content,
@@ -105,13 +108,28 @@ export class MainView extends React.Component {
     );
   };
 
+  goToSettings = () => {
+    this.setState({
+      redirectToConfig: true,
+    });
+  };
+
   render() {
-    const { isLoading, files, currentPage, pageSize, totalCount } = this.state;
+    const { isLoading, files, currentPage, pageSize, totalCount, redirectToConfig } = this.state;
+
+    if (redirectToConfig) {
+      return <Redirect to="/config" />;
+    }
 
     return (
       <StyledContainer>
         <FilesWs onFile={this.onWsEvent} />
-        <MainHeader>Notarized file list</MainHeader>
+        <HeaderContainer>
+          <MainHeader>Notarized file list</MainHeader>
+          <IconButton onClick={this.goToSettings}>
+            <SettingsIcon />
+          </IconButton>
+        </HeaderContainer>
         <Table
           isLoading={isLoading}
           sortedFiles={files}
@@ -126,6 +144,12 @@ export class MainView extends React.Component {
     );
   }
 }
+
+const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 const MainHeader = styled.h1`
   font-size: 4em;
