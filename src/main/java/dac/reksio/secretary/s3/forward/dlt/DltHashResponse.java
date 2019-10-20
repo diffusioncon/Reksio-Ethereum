@@ -1,13 +1,15 @@
 package dac.reksio.secretary.s3.forward.dlt;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class DltHashDto {
+@NoArgsConstructor
+class DltHashResponse {
     private String result;
-    private String hash;
+    @JsonProperty("tx_hash")
+    private String transactionHash;
 }

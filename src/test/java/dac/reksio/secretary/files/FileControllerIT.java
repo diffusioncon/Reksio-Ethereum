@@ -1,13 +1,10 @@
 package dac.reksio.secretary.files;
 
-import dac.reksio.secretary.s3.forward.dlt.DltClient;
 import dac.reksio.secretary.s3.forward.dlt.DltHashDto;
-import org.hamcrest.Matchers;
+import dac.reksio.secretary.s3.forward.dlt.DltService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Answers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,8 +15,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.time.Instant;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,16 +32,16 @@ class FileControllerIT {
     @Autowired
     private FileRepository fileRepository;
     @MockBean
-    private DltClient dltClient;
+    private DltService dltService;
     @MockBean
     private FileHashUpdater fileHashUpdater;
 
     @BeforeEach
     void setup() {
-        fileRepository.save(FileEntity.builder().filename("file1").hash("hash1").uploadDateTime(Instant.parse("2019-10-19T12:59:00.646819Z")).build());
-        fileRepository.save(FileEntity.builder().filename("file2").hash("hash2").uploadDateTime(Instant.parse("2019-10-12T12:59:00.646819Z")).build());
-        when(dltClient.getHashOfFile("file1")).thenReturn(new DltHashDto("OK", "hash1"));
-        when(dltClient.getHashOfFile("file2")).thenReturn(new DltHashDto("OK", "hash2"));
+        FileEntity file = fileRepository.save(FileEntity.builder().filename("file1").hash("hash1").uploadDateTime(Instant.parse("2019-10-19T12:59:00.646819Z")).transactionHash("txHash").hashCalculationDateTime(Instant.parse("2019-10-09T12:59:00.646819Z")).build());
+        FileEntity file2 = fileRepository.save(FileEntity.builder().filename("file2").hash("hash2").uploadDateTime(Instant.parse("2019-10-12T12:59:00.646819Z")).transactionHash("txHash2").hashCalculationDateTime(Instant.parse("2019-10-10T12:59:00.646819Z")).build());
+        when(dltService.getHashOfFile(file)).thenReturn(new DltHashDto("OK", "hash1"));
+        when(dltService.getHashOfFile(file2)).thenReturn(new DltHashDto("OK", "hash2"));
         when(fileHashUpdater.updateFile(isA(FileEntity.class))).thenAnswer(i -> i.getArguments()[0]);
     }
 
@@ -57,9 +55,13 @@ class FileControllerIT {
                .andExpect(jsonPath("$.content[0].hash", is("hash1")))
                .andExpect(jsonPath("$.content[0].filename", is("file1")))
                .andExpect(jsonPath("$.content[0].uploadDateTime", is("2019-10-19T12:59:00.646819Z")))
+               .andExpect(jsonPath("$.content[0].transactionHash", is("txHash")))
+               .andExpect(jsonPath("$.content[0].hashCalculationDateTime", is("2019-10-09T12:59:00.646819Z")))
                .andExpect(jsonPath("$.content[1].hash", is("hash2")))
                .andExpect(jsonPath("$.content[1].filename", is("file2")))
-               .andExpect(jsonPath("$.content[1].uploadDateTime", is("2019-10-12T12:59:00.646819Z")));
+               .andExpect(jsonPath("$.content[1].uploadDateTime", is("2019-10-12T12:59:00.646819Z")))
+               .andExpect(jsonPath("$.content[1].transactionHash", is("txHash2")))
+               .andExpect(jsonPath("$.content[1].hashCalculationDateTime", is("2019-10-10T12:59:00.646819Z")));
 
     }
 

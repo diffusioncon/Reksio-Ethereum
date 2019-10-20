@@ -5,7 +5,7 @@ import dac.reksio.secretary.files.FileEntity;
 import dac.reksio.secretary.files.FileRepository;
 import dac.reksio.secretary.files.FileWebsocketSender;
 import dac.reksio.secretary.s3.S3UploadRequest;
-import dac.reksio.secretary.s3.forward.dlt.DltClient;
+import dac.reksio.secretary.s3.forward.dlt.DltService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import java.time.Instant;
 public class S3UploadProxy {
 
     private final FileHashCalculator fileHashCalculator;
-    private final DltClient dltClient;
+    private final DltService dltService;
     private final FileRepository filesRepository;
     private final ReksioStorageClient reksioS3Client;
     private final FileConverter fileConverter;
@@ -27,9 +27,9 @@ public class S3UploadProxy {
     public void forwardRequest(S3UploadRequest s3UploadRequest) {
         String hexHash = fileHashCalculator.calculateHash(s3UploadRequest.getFileContent());
         String filename = s3UploadRequest.getKey();
-        dltClient.saveInDlt(filename, hexHash);
 
         FileEntity file = saveInDb(filename, hexHash);
+        dltService.saveInDlt(file.getId(), filename, hexHash);
         reksioS3Client.uploadFile(s3UploadRequest);
         sendToWebsocket(file);
     }
@@ -45,4 +45,5 @@ public class S3UploadProxy {
     private void sendToWebsocket(FileEntity file) {
         fileWebsocketSender.sendFile(fileConverter.convertToDto(file));
     }
+
 }

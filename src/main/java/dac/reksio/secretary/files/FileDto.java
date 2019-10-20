@@ -12,4 +12,6 @@ public class FileDto {
     private Instant uploadDateTime;
     private String hash;
     private boolean hashIsOk;
+    private String transactionHash;
+    private Instant hashCalculationDateTime;
 }
