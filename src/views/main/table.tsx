@@ -11,6 +11,7 @@ import {
   CircularProgress,
   TablePagination,
   LinearProgress,
+  Button,
 } from '@material-ui/core';
 import CheckIcon from '@material-ui/icons/Check';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -48,6 +49,7 @@ const Table: React.FC<TableProps> = ({
           <TableCell align="center">Uploaded on</TableCell>
           <TableCell align="center">Last status</TableCell>
           <TableCell align="center">Last checked</TableCell>
+          <TableCell />
           <TableCell />
         </TableRow>
       </TableHead>
@@ -110,6 +112,15 @@ const Table: React.FC<TableProps> = ({
                       <CircularProgress size={48} />
                     )}
                   </IconContainer>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    disabled={status === Status.PENDING}
+                    target="_blank"
+                    href={`http://kovan.etherscan.io/tx/${file.transactionHash}`}
+                  >
+                    SEE ON ETHERSCAN
+                  </Button>
                 </TableCell>
               </TableRow>
             );
