@@ -3,10 +3,12 @@ package dac.reksio.secretary.s3.forward.dlt;
 import dac.reksio.secretary.config.dlt.DltConfig;
 import dac.reksio.secretary.config.dlt.DltConfigRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DltClient {
@@ -25,6 +27,11 @@ public class DltClient {
 
     public DltHashDto getHashOfFile(String filename) {
         DltConfig dltConfig = dltConfigRepository.getOne(DltConfigRepository.ID);
-        return restTemplate.getForObject(dltConfig.getUri() + HASH_ENDPOINT, DltHashDto.class);
+        try {
+            return restTemplate.getForObject(dltConfig.getUri() + HASH_ENDPOINT + filename, DltHashDto.class);
+        } catch (RuntimeException ex) {
+            log.warn("Could not read hash from notary", ex);
+            return new DltHashDto("FAILED", "0x0");
+        }
     }
 }

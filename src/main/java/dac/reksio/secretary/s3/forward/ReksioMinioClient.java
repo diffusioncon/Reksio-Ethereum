@@ -25,7 +25,7 @@ class ReksioMinioClient implements ReksioStorageClient {
     public void uploadFile(S3UploadRequest s3UploadRequest) {
         var s3Configuration = s3ConfigRepository.getOne(S3ConfigRepository.ID);
 
-        MinioClient minioClient = getMinioClient(s3Configuration);
+        var minioClient = getMinioClient(s3Configuration);
         minioClient.putObject(
                 s3Configuration.getBucket(),
                 s3UploadRequest.getKey(),
