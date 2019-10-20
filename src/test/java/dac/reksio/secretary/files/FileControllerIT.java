@@ -1,7 +1,7 @@
 package dac.reksio.secretary.files;
 
 import dac.reksio.secretary.s3.forward.dlt.DltHashDto;
-import dac.reksio.secretary.s3.forward.dlt.DltService;
+import dac.reksio.secretary.s3.forward.dlt.DltHashProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ class FileControllerIT {
     @Autowired
     private FileRepository fileRepository;
     @MockBean
-    private DltService dltService;
+    private DltHashProvider dltHashProvider;
     @MockBean
     private FileHashUpdater fileHashUpdater;
 
@@ -40,8 +40,8 @@ class FileControllerIT {
     void setup() {
         FileEntity file = fileRepository.save(FileEntity.builder().filename("file1").hash("hash1").uploadDateTime(Instant.parse("2019-10-19T12:59:00.646819Z")).transactionHash("txHash").hashCalculationDateTime(Instant.parse("2019-10-09T12:59:00.646819Z")).build());
         FileEntity file2 = fileRepository.save(FileEntity.builder().filename("file2").hash("hash2").uploadDateTime(Instant.parse("2019-10-12T12:59:00.646819Z")).transactionHash("txHash2").hashCalculationDateTime(Instant.parse("2019-10-10T12:59:00.646819Z")).build());
-        when(dltService.getHashOfFile(file)).thenReturn(new DltHashDto("OK", "hash1"));
-        when(dltService.getHashOfFile(file2)).thenReturn(new DltHashDto("OK", "hash2"));
+        when(dltHashProvider.getHashOfFile(file)).thenReturn(new DltHashDto("OK", "hash1"));
+        when(dltHashProvider.getHashOfFile(file2)).thenReturn(new DltHashDto("OK", "hash2"));
         when(fileHashUpdater.updateFile(isA(FileEntity.class))).thenAnswer(i -> i.getArguments()[0]);
     }
 
