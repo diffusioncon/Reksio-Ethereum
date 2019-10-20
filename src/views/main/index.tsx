@@ -26,7 +26,9 @@ const MainView: React.FC = () => {
   };
 
   const onWsEvent = async () => {
-    await fetchFiles();
+    if (currentPage === 0) {
+      await fetchFiles();
+    }
   };
 
   useEffect(() => {
