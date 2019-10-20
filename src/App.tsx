@@ -9,10 +9,7 @@ import MainView from './views/main';
 const theme = createMuiTheme({
   typography: {
     fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      'Avenir Next',
+      'Muli',
       '"Helvetica Neue"',
       'Arial',
       'sans-serif',

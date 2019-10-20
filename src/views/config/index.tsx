@@ -6,27 +6,18 @@ import WelcomeStep from './steps/Welcome';
 import StorageStep from './steps/Storage';
 import DLTStep from './steps/DLT';
 import { Redirect } from 'react-router';
+import S3Details from './steps/S3Details';
 
-const steps = [WelcomeStep, StorageStep, DLTStep];
+const steps = [WelcomeStep, StorageStep, S3Details, DLTStep];
+
+export interface StepProps {
+  onStepCompleted: () => void;
+}
 
 class ConfigView extends React.Component {
   state = {
     stepIdx: 0,
     redirectToList: false,
-  };
-
-  componentDidMount() {
-    window.addEventListener('keydown', this.onKeyDown);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.onKeyDown);
-  }
-
-  onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      this.onNextStep();
-    }
   };
 
   onNextStep = () => {
@@ -60,7 +51,7 @@ class ConfigView extends React.Component {
         <SwitchTransition>
           <CSSTransition key={stepIdx} timeout={700} classNames="slide" unmountOnExit>
             <StepContainer>
-              <Component />
+              <Component onStepCompleted={this.onNextStep} />
             </StepContainer>
           </CSSTransition>
         </SwitchTransition>
