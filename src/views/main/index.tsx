@@ -13,9 +13,9 @@ const MainView: React.FC = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
 
-  const fetchFiles = async () => {
+  const fetchFiles = useCallback(async () => {
     try {
-      const response = await axios.get('/api/files');
+      const response = await axios.get(`/api/files?page=${currentPage}&size=${pageSize}`);
       const fetchedFiles = response.data as Pageable<FileInfo>;
       setFiles(fetchedFiles.content);
       setCurrentPage(fetchedFiles.number);
@@ -23,7 +23,7 @@ const MainView: React.FC = () => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [currentPage, pageSize]);
 
   const onWsEvent = async () => {
     if (currentPage === 0) {
@@ -33,7 +33,7 @@ const MainView: React.FC = () => {
 
   useEffect(() => {
     fetchFiles();
-  }, []);
+  }, [fetchFiles]);
 
   const sortedFiles = files.sort((f1, f2) => f2.uploadDateTime.localeCompare(f1.uploadDateTime));
 
@@ -62,8 +62,10 @@ const MainView: React.FC = () => {
         currentPage={currentPage}
         pageSize={pageSize}
         totalFiles={totalCount}
-        onChangePage={() => {}}
-        onChangePageSize={() => {}}
+        onChangePage={(a: any) => {
+          console.log(a);
+        }}
+        onChangePageSize={fetchFiles}
       />
     </StyledContainer>
   );

@@ -23,7 +23,7 @@ interface TableProps {
   pageSize: number;
   totalFiles: number;
   refreshFile: (file: string) => void;
-  onChangePage: () => void;
+  onChangePage: (a: any) => void;
   onChangePageSize: () => void;
 }
 
