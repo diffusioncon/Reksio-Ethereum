@@ -1,0 +1,9 @@
+__pycache__
+venv
+.env
+.secret
+build/
+node_modules
+package-lock.json
+yarn.lock
+*.iml
