@@ -1,7 +1,6 @@
 package dac.reksio.secretary.files;
 
 import dac.reksio.secretary.exception.ResourceNotFoundException;
-import dac.reksio.secretary.s3.forward.dlt.DltHashDto;
 import dac.reksio.secretary.s3.forward.dlt.DltService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +15,7 @@ class FileController {
     private final FileRepository fileRepository;
     private final DltService dltService;
     private final FileHashUpdater fileHashUpdater;
+    private final FileConverter fileConverter;
 
     @GetMapping
     Page<FileDto> getFiles(Pageable pageable) {
@@ -31,14 +31,7 @@ class FileController {
         return convertToDto(updatedFile);
     }
 
-    private FileDto convertToDto(FileEntity fileEntity) {
-        DltHashDto hashOfFile = dltService.getHashOfFile(fileEntity.getFilename());
-        boolean isOk = hashOfFile.getHash().equalsIgnoreCase(fileEntity.getHash());
-        return FileDto.builder()
-                      .filename(fileEntity.getFilename())
-                      .hash(fileEntity.getHash())
-                      .uploadDateTime(fileEntity.getUploadDateTime())
-                      .hashIsOk(isOk)
-                      .build();
+    private FileDto convertToDto(FileEntity file) {
+        return fileConverter.convertToDto(file);
     }
 }

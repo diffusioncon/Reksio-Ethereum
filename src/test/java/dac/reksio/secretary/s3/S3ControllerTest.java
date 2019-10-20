@@ -1,5 +1,7 @@
 package dac.reksio.secretary.s3;
 
+import dac.reksio.secretary.files.FileConverter;
+import dac.reksio.secretary.files.FileWebsocketSender;
 import dac.reksio.secretary.s3.forward.ReksioStorageClient;
 import dac.reksio.secretary.s3.forward.dlt.DltService;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,10 @@ class S3ControllerTest {
     private ReksioStorageClient reksioStorageClient;
     @MockBean
     private DltService dltService;
+    @MockBean
+    private FileWebsocketSender fileWebsocketSender;
+    @MockBean
+    private FileConverter fileConverter;
 
     @Test
     void shouldUploadFileToS3() throws Exception {
