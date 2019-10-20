@@ -7,6 +7,8 @@ services:
       POSTGRES_PASSWORD: secretary
       POSTGRES_DB: secretary
       POSTGRES_USER: secretary
+    networks:
+      - reksio
     ports:
       - "5432:5432"
 
@@ -14,10 +16,10 @@ services:
     image: registry.gitlab.com/bettersolutions/reksio/secretary:latest
     depends_on:
       - postgres
+    networks:
+      - reksio
     volumes:
       - ./config/secretary/application.properties:/config/application.properties
-    links:
-      - "postgres:postgres"
     ports:
       - "8080:8080"
 
@@ -25,12 +27,23 @@ services:
     image: registry.gitlab.com/bettersolutions/reksio/rtsp-client:latest
     depends_on:
       - secretary
+    networks:
+      - reksio
     environment:
       RTSP_IP: 192.168.88.10
       RTSP_PORT: 8554
       RTSP_RESOURCE_NAME: test
       SECRETARY_URL: secretary:8080/
       VIDEO_DURATION: 30
+
+  front:
+    image: registry.gitlab.com/bettersolutions/reksio/front:latest
+    depends_on:
+      - secretary
+    networks:
+      - reksio
+    environment:
+      SECRETARY_HOST: secretary:8080
 
   minio1:
     image: minio/minio:RELEASE.2019-10-12T01-39-57Z
@@ -43,6 +56,8 @@ services:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
     command: server http://minio{1...4}/data{1...2}
+    networks:
+      - reksio
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -60,6 +75,8 @@ services:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
     command: server http://minio{1...4}/data{1...2}
+    networks:
+      - reksio
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -77,6 +94,8 @@ services:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
     command: server http://minio{1...4}/data{1...2}
+    networks:
+      - reksio
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -94,11 +113,16 @@ services:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
     command: server http://minio{1...4}/data{1...2}
+    networks:
+      - reksio
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3
+
+networks:
+  reksio:
 
 ## By default this config uses default local driver,
 ## For custom volumes replace with volume driver configuration.
