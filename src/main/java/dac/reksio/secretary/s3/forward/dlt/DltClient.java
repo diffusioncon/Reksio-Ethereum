@@ -5,30 +5,28 @@ import dac.reksio.secretary.config.dlt.DltConfigRepository;
 import dac.reksio.secretary.config.dlt.DltProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class DltClient {
+class DltClient {
 
-    public static final String HASH_ENDPOINT = "/api/v1/hash/";
+    private static final String HASH_ENDPOINT = "/api/v1/hash/";
     private final DltConfigRepository dltConfigRepository;
     private final DltProperties dltProperties;
     private final RestTemplate restTemplate;
 
-    @Async
-    public void saveInDlt(String originalFilename, String hexHash) {
+    DltHashResponse saveInDlt(String originalFilename, String hexHash) {
         DltConfig dltConfig = dltConfigRepository.getOne(DltConfigRepository.ID);
         DltFileDto dltFileDto = new DltFileDto(originalFilename, hexHash);
 
         String url = dltProperties.getUri(dltConfig.getDlt()) + HASH_ENDPOINT;
-        restTemplate.postForEntity(url, dltFileDto, String.class);
+        return restTemplate.postForEntity(url, dltFileDto, DltHashResponse.class).getBody();
     }
 
-    public DltHashDto getHashOfFile(String filename) {
+    DltHashDto getHashOfFile(String filename) {
         DltConfig dltConfig = dltConfigRepository.getOne(DltConfigRepository.ID);
         String url = dltProperties.getUri(dltConfig.getDlt()) + HASH_ENDPOINT + filename;
         try {
