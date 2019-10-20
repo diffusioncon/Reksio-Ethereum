@@ -7,10 +7,11 @@ import { Pageable } from '../../types/pageable';
 import { FilesWs } from '../../ws/files-ws';
 
 const MainView: React.FC = () => {
-  // TODO: fetch from backend
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(20);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
 
   const fetchFiles = async () => {
     try {
@@ -26,7 +27,7 @@ const MainView: React.FC = () => {
 
   const onWsEvent = async () => {
     await fetchFiles();
-  }
+  };
 
   useEffect(() => {
     fetchFiles();
@@ -36,6 +37,10 @@ const MainView: React.FC = () => {
 
   const refreshFile = (filename: string) => {
     const fileIndex = files.findIndex(f => f.filename === filename);
+    if (fileIndex === -1) {
+      // file no longer on displayed page
+      return;
+    }
     const file = files[fileIndex];
     const updatedFile: FileInfo = {
       ...file,
@@ -49,7 +54,15 @@ const MainView: React.FC = () => {
     <StyledContainer>
       <FilesWs onFile={() => onWsEvent()}></FilesWs>
       <MainHeader>File list</MainHeader>
-      <Table sortedFiles={sortedFiles} refreshFile={refreshFile}></Table>
+      <Table
+        sortedFiles={sortedFiles}
+        refreshFile={refreshFile}
+        currentPage={currentPage}
+        pageSize={pageSize}
+        totalFiles={totalCount}
+        onChangePage={() => {}}
+        onChangePageSize={() => {}}
+      />
     </StyledContainer>
   );
 };

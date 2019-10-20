@@ -1,10 +1,5 @@
-import { FileStatus } from '../types/fileInfo';
 import { DateTime } from 'luxon';
 import { useEffect } from 'react';
-
-export function isStatusValid(status: FileStatus) {
-  return status === 'valid';
-}
 
 export function isoToDate(isoDate: string): string {
   const date = DateTime.fromISO(isoDate);
