@@ -3,17 +3,22 @@ import styled from 'styled-components';
 import axios from 'axios';
 import { FileInfo } from '../../types/fileInfo';
 import Table from './table';
+import { Pageable } from '../../types/pageable';
 
 const MainView: React.FC = () => {
   // TODO: fetch from backend
   const [files, setFiles] = useState<FileInfo[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     const fetchFiles = async () => {
       try {
         const response = await axios.get('/api/files');
-        const fetchedFiles = response.data as FileInfo[];
-        setFiles(fetchedFiles);
+        const fetchedFiles = response.data as Pageable<FileInfo>;
+        setFiles(fetchedFiles.content);
+        setCurrentPage(fetchedFiles.number);
+        setTotalPages(fetchedFiles.totalPages);
       } catch (error) {
         console.error(error);
       }
