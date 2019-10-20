@@ -1,0 +1,37 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.0.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java'
+    id "io.freefair.lombok" version "4.0.2"
+}
+
+group = 'dac.reksio'
+sourceCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation platform('software.amazon.awssdk:bom:2.5.29')
+    implementation 'software.amazon.awssdk:s3'
+    implementation 'io.minio:minio:6.0.11'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'com.google.guava:guava:28.1-jre'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'com.h2database:h2'
+}
+
+compileJava {
+    options.compilerArgs << "-parameters"
+}
+
+test {
+    useJUnitPlatform()
+}

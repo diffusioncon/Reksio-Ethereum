@@ -8,3 +8,6 @@ package-lock.json
 yarn.lock
 *.iml
 /.idea/
+build/
+.gradle/
+lombok.config
