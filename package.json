@@ -22,6 +22,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
     "react-select": "^3.0.8",
+    "react-stomp": "^4.2.0",
     "react-transition-group": "^4.3.0",
     "styled-components": "^4.4.0",
     "typescript": "3.6.4"
@@ -47,5 +48,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://192.168.88.245:8080"
+  "proxy": "http://127.0.0.1:8080"
 }
