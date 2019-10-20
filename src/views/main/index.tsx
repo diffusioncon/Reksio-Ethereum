@@ -1,0 +1,54 @@
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import axios from 'axios';
+import { FileInfo } from '../../types/fileInfo';
+import Table from './table';
+
+const MainView: React.FC = () => {
+  // TODO: fetch from backend
+  const [files, setFiles] = useState<FileInfo[]>([]);
+
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        const response = await axios.get('/api/files');
+        const fetchedFiles = response.data as FileInfo[];
+        setFiles(fetchedFiles);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchFiles();
+  }, []);
+
+  const sortedFiles = files.sort((f1, f2) => f2.uploadDateTime.localeCompare(f1.uploadDateTime));
+
+  const refreshFile = (filename: string) => {
+    const fileIndex = files.findIndex(f => f.filename === filename);
+    const file = files[fileIndex];
+    const updatedFile: FileInfo = {
+      ...file,
+      isRefreshing: true,
+    };
+    const updatedFiles = [...files.slice(0, fileIndex), updatedFile, ...files.slice(fileIndex + 1, files.length)];
+    setFiles(updatedFiles);
+  };
+
+  return (
+    <StyledContainer>
+      <MainHeader>File list</MainHeader>
+      <Table sortedFiles={sortedFiles} refreshFile={refreshFile}></Table>
+    </StyledContainer>
+  );
+};
+
+const MainHeader = styled.h1`
+  font-size: 4em;
+`;
+
+const StyledContainer = styled.div`
+  width: 80%;
+  margin: 0 auto;
+`;
+
+export default MainView;

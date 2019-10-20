@@ -1,0 +1,13 @@
+.slide-enter {
+  transform: translate(100%);
+}
+
+.slide-enter-active,
+.slide-exit {
+  transform: none;
+  transition: transform 0.7s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+.slide-exit-active {
+  transform: translate(-100%);
+}

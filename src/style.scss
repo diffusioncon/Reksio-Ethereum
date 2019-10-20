@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+  font-family: 'Avenir Next';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.MuiTooltip-tooltip {
+  max-width: unset !important;
+  // margin: 4px 0 !important;
+}

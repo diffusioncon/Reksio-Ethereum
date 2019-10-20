@@ -1,26 +1,47 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { StylesProvider, createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import './style.scss';
+import { CssBaseline } from '@material-ui/core';
+import ConfigView from './views/config';
+import MainView from './views/main';
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const theme = createMuiTheme({
+  typography: {
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Avenir Next',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+  },
+});
+
+const App: React.FC = () => (
+  <StylesProvider injectFirst>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <Switch>
+          <Route path="/list">
+            <MainView />
+          </Route>
+          <Route path="/config">
+            <ConfigView />
+          </Route>
+          <Route>
+            <Redirect to="/list" />
+          </Route>
+        </Switch>
+      </Router>
+    </ThemeProvider>
+  </StylesProvider>
+);
 
 export default App;
