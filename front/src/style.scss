@@ -1,0 +1,32 @@
+:root {
+  --primary: #008080;
+  --background: #fafafa;
+  --gray: #b1baba;
+}
+
+body {
+  margin: 0;
+  font-family: 'Muli';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background);
+}
+
+.MuiTooltip-tooltip {
+  max-width: unset !important;
+}
+
+h1 {
+  color: var(--primary);
+  font-size: 4rem;
+}
+
+h2 {
+  color: var(--primary);
+  font-size: 2.5rem;
+}
+
+a {
+  text-decoration: none;
+  color: var(--primary);
+}

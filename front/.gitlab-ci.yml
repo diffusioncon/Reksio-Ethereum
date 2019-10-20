@@ -1,0 +1,54 @@
+stages:
+  - build
+  - deploy
+
+build:
+  image: node:10
+  stage: build
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - build
+    expire_in: 1 hour
+
+build_docker_master:
+  image: docker:$DOCKER_VERSION
+  stage: deploy
+  services:
+    - docker:$DOCKER_DIND_VERSION
+  variables:
+    DOCKER_HOST: tcp://localhost:2375
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - IMAGE_TAG_LATEST="$CI_REGISTRY_IMAGE:latest"
+    - IMAGE_TAG_VERSION="$CI_REGISTRY_IMAGE:1.0.$CI_JOB_ID"
+    - docker build -t "$IMAGE_TAG_LATEST" -t "$IMAGE_TAG_VERSION" .
+    - docker push "$IMAGE_TAG_VERSION"
+    - docker push "$IMAGE_TAG_LATEST"
+  only:
+    - master
+  dependencies:
+    - build
+
+build_docker_branch:
+  image: docker:$DOCKER_VERSION
+  stage: deploy
+  services:
+    - docker:$DOCKER_DIND_VERSION
+  variables:
+    DOCKER_HOST: tcp://localhost:2375
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - IMAGE_TAG="$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+    - docker build -t "$IMAGE_TAG" .
+    - docker push "$IMAGE_TAG"
+  except:
+    - master
+  dependencies:
+    - build
