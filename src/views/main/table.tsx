@@ -10,21 +10,23 @@ import {
   IconButton,
   CircularProgress,
   TablePagination,
+  LinearProgress,
 } from '@material-ui/core';
 import CheckIcon from '@material-ui/icons/Check';
 import ErrorIcon from '@material-ui/icons/Error';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import { FileInfo } from '../../types/fileInfo';
-import { isoToDateTime, isoToDate } from '../../utils';
+import { FileInfo, Status } from '../../types/fileInfo';
+import { isoToDateTime, isoToDate, getFileStatus } from '../../utils';
 
 interface TableProps {
   sortedFiles: FileInfo[];
   currentPage: number;
   pageSize: number;
   totalFiles: number;
-  refreshFile: (file: string) => void;
-  onChangePage: (a: any) => void;
-  onChangePageSize: () => void;
+  isLoading: boolean;
+  refreshFile: (file: FileInfo) => void;
+  onChangePage: (_: any, page: number) => void;
+  onChangePageSize: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
 const Table: React.FC<TableProps> = ({
@@ -35,6 +37,7 @@ const Table: React.FC<TableProps> = ({
   refreshFile,
   onChangePage,
   onChangePageSize,
+  isLoading,
 }) => (
   <>
     <MuiTable stickyHeader>
@@ -44,49 +47,75 @@ const Table: React.FC<TableProps> = ({
           <HashTableCell align="center">Hash</HashTableCell>
           <TableCell align="center">Uploaded on</TableCell>
           <TableCell align="center">Last status</TableCell>
+          <TableCell align="center">Last checked</TableCell>
           <TableCell />
         </TableRow>
       </TableHead>
-      <TableBody>
-        {sortedFiles.map(file => {
-          return (
-            <TableRow key={file.filename}>
-              <TableCell component="th" scope="row">
-                {file.filename}
-              </TableCell>
-              <HashTableCell align="center">
-                <Tooltip title={file.hash} interactive>
-                  <OverflowContainer>
-                    <span>{file.hash}</span>
-                  </OverflowContainer>
-                </Tooltip>
-              </HashTableCell>
-              <TableCell align="center">
-                <Tooltip title={isoToDateTime(file.uploadDateTime)} interactive>
-                  <div>{isoToDate(file.uploadDateTime)}</div>
-                </Tooltip>
-              </TableCell>
-              <StatusTableCell align="center" isValid={file.hashIsOk}>
-                <Tooltip title={file.hashIsOk ? 'Hash is matching' : 'Hash mismtach'}>
-                  <IconContainer>{file.hashIsOk ? <CheckIcon /> : <ErrorIcon />}</IconContainer>
-                </Tooltip>
-              </StatusTableCell>
-              <TableCell>
-                <IconContainer>
-                  {!file.isRefreshing ? (
-                    <IconButton aria-label="refresh" size="medium" onClick={() => refreshFile(file.filename)}>
-                      <RefreshIcon />
-                    </IconButton>
-                  ) : (
-                    <CircularProgress size={48} />
-                  )}
-                </IconContainer>
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
+      {!isLoading && (
+        <TableBody>
+          {sortedFiles.map(file => {
+            const status = getFileStatus(file);
+            return (
+              <TableRow key={file.filename}>
+                <TableCell component="th" scope="row">
+                  {file.filename}
+                </TableCell>
+                <HashTableCell align="center">
+                  <Tooltip title={file.hash} interactive>
+                    <OverflowContainer>
+                      <span>{file.hash}</span>
+                    </OverflowContainer>
+                  </Tooltip>
+                </HashTableCell>
+                <TableCell align="center">
+                  <Tooltip title={isoToDateTime(file.uploadDateTime)} interactive>
+                    <div>{isoToDate(file.uploadDateTime)}</div>
+                  </Tooltip>
+                </TableCell>
+                <StatusTableCell align="center" isValid={status === Status.VALID}>
+                  <Tooltip
+                    title={
+                      status === Status.VALID
+                        ? 'Hash is matching'
+                        : status === Status.INVALID
+                        ? 'Hash mismatch'
+                        : 'DLT notarization pending'
+                    }
+                  >
+                    <IconContainer>
+                      {status === Status.VALID ? (
+                        <CheckIcon />
+                      ) : status === Status.INVALID ? (
+                        <ErrorIcon />
+                      ) : (
+                        <CircularProgress />
+                      )}
+                    </IconContainer>
+                  </Tooltip>
+                </StatusTableCell>
+                <TableCell align="center">
+                  <Tooltip title={isoToDateTime(file.hashCalculationDateTime)} interactive>
+                    <div>{isoToDate(file.hashCalculationDateTime)}</div>
+                  </Tooltip>
+                </TableCell>
+                <TableCell>
+                  <IconContainer>
+                    {!file.isRefreshing ? (
+                      <IconButton aria-label="refresh" size="medium" onClick={() => refreshFile(file)}>
+                        <RefreshIcon />
+                      </IconButton>
+                    ) : (
+                      <CircularProgress size={48} />
+                    )}
+                  </IconContainer>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      )}
     </MuiTable>
+    {isLoading && <LinearProgress />}
     <TablePagination
       component="div"
       count={totalFiles}

@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 import { useEffect } from 'react';
+import { Status, FileInfo } from '../types/fileInfo';
 
 export function isoToDate(isoDate: string): string {
   const date = DateTime.fromISO(isoDate);
@@ -21,4 +22,14 @@ export function useEnterKey(callback: () => void) {
     window.addEventListener('keydown', listener);
     return () => window.removeEventListener('keydown', listener);
   });
+}
+
+export function getFileStatus(file: FileInfo): Status {
+  if (!file.transactionHash) {
+    return Status.PENDING;
+  }
+  if (file.hashIsOk) {
+    return Status.VALID;
+  }
+  return Status.INVALID;
 }
