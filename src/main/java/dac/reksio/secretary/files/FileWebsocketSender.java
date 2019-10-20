@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class FileWebsocketSender {
 
-    private static final String FILES_ENDPOINT = "/api/files";
+    public static final String FILES_ENDPOINT = "/files";
 
     private final SimpMessagingTemplate messagingTemplate;
 
