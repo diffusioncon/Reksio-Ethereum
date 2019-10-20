@@ -35,10 +35,12 @@ public class S3UploadProxy {
     }
 
     private FileEntity saveInDb(String filename, String hexHash) {
+        Instant now = Instant.now();
         return filesRepository.save(FileEntity.builder()
                                               .filename(filename)
                                               .hash(hexHash)
-                                              .uploadDateTime(Instant.now())
+                                              .hashCalculationDateTime(now)
+                                              .uploadDateTime(now)
                                               .build());
     }
 

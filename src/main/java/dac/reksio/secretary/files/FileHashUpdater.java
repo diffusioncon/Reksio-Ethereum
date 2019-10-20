@@ -5,6 +5,8 @@ import dac.reksio.secretary.s3.forward.ReksioStorageClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+
 @Component
 @RequiredArgsConstructor
 class FileHashUpdater {
@@ -17,6 +19,7 @@ class FileHashUpdater {
         byte[] fileContent = reksioStorageClient.getFileContent(fileEntity.getFilename());
         String hash = fileHashCalculator.calculateHash(fileContent);
         fileEntity.setHash(hash);
+        fileEntity.setHashCalculationDateTime(Instant.now());
         return fileRepository.save(fileEntity);
     }
 }
