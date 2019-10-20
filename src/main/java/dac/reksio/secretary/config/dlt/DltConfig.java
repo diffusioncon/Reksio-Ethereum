@@ -17,5 +17,4 @@ public class DltConfig {
     @Id
     private String id;
     private Dlt dlt;
-    private String uri;
 }

@@ -11,5 +11,4 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 class DltConfigDTO {
     private Dlt dlt;
-    private String uri;
 }
