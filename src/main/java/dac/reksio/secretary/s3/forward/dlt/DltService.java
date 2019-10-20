@@ -5,6 +5,7 @@ import dac.reksio.secretary.files.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -16,6 +17,7 @@ public class DltService {
     private final FileRepository fileRepository;
 
     @Async
+    @Transactional
     public void saveInDlt(Long fileId, String originalFilename, String hexHash) {
         DltHashResponse dltHashResponse = dltClient.saveInDlt(originalFilename, hexHash);
         FileEntity fileEntity = fileRepository.getOne(fileId);

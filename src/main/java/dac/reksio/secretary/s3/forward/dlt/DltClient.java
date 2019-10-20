@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 class DltClient {
 
-    private static final String HASH_ENDPOINT = "/api/v1/hash/";
+    private static final String HASH_ENDPOINT = "/api/v1/hash";
     private final DltConfigRepository dltConfigRepository;
     private final DltProperties dltProperties;
     private final RestTemplate restTemplate;
@@ -28,7 +28,7 @@ class DltClient {
 
     DltHashDto getHashOfFile(String filename) {
         DltConfig dltConfig = dltConfigRepository.getOne(DltConfigRepository.ID);
-        String url = dltProperties.getUri(dltConfig.getDlt()) + HASH_ENDPOINT + filename;
+        String url = dltProperties.getUri(dltConfig.getDlt()) + HASH_ENDPOINT + "/" + filename;
         try {
             return restTemplate.getForObject(url, DltHashDto.class);
         } catch (RuntimeException ex) {

@@ -9,7 +9,7 @@ import java.util.Map;
 @Component
 public class DltProperties {
 
-    @Value("dlt.ethereum.uri")
+    @Value("${dlt.ethereum.uri}")
     private String ethereumUri;
 
     private Map<Dlt, String> uriMap;
