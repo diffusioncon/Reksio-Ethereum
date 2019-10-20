@@ -44,6 +44,8 @@ services:
       - reksio
     environment:
       SECRETARY_HOST: secretary:8080
+    ports:
+      - "8081:80"
 
   minio1:
     image: minio/minio:RELEASE.2019-10-12T01-39-57Z
