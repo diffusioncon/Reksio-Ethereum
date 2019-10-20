@@ -1,9 +1,7 @@
 package dac.reksio.secretary.s3;
 
-import dac.reksio.secretary.files.FileConverter;
-import dac.reksio.secretary.files.FileWebsocketSender;
 import dac.reksio.secretary.s3.forward.ReksioStorageClient;
-import dac.reksio.secretary.s3.forward.dlt.DltService;
+import dac.reksio.secretary.s3.forward.dlt.DltSaver;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,11 +22,7 @@ class S3ControllerTest {
     @MockBean
     private ReksioStorageClient reksioStorageClient;
     @MockBean
-    private DltService dltService;
-    @MockBean
-    private FileWebsocketSender fileWebsocketSender;
-    @MockBean
-    private FileConverter fileConverter;
+    private DltSaver dltSaver;
 
     @Test
     void shouldUploadFileToS3() throws Exception {
