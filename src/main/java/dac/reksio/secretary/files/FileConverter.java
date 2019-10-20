@@ -18,6 +18,7 @@ public class FileConverter {
                       .hash(fileEntity.getHash())
                       .uploadDateTime(fileEntity.getUploadDateTime())
                       .hashIsOk(isOk)
+                      .transactionHash(fileEntity.getTransactionHash())
                       .build();
     }
 
