@@ -8,7 +8,7 @@ blocksec2go==1.1
 certifi==2019.9.11
 cffi==1.12.3
 chardet==3.0.4
-cryptography==3.2
+cryptography==3.3.2
 cytoolz==0.10.0
 ecdsa==0.13.3
 eth-abi==2.0.0
