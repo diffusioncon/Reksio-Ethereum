@@ -30,7 +30,7 @@ mccabe==0.6.1
 multiaddr==0.0.8
 netaddr==0.7.19
 parsimonious==0.8.1
-protobuf==3.10.0
+protobuf==3.15.0
 pycodestyle==2.5.0
 pycparser==2.19
 pycryptodome==3.9.0
